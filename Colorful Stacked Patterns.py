@@ -178,21 +178,6 @@ def getseed(seed):
 
 pygame.init()
 
-def pilImageToSurface(pilImage):
-    return pygame.image.fromstring(
-        pilImage.tobytes(),
-        pilImage.size,
-        pilImage.mode)
-
-def gradientRect( window, left_colour, right_colour, target_rect, c7 ):
-    """ Draw a horizontal-gradient filled rectangle covering <target_rect> """
-    colour_rect = pygame.Surface( ( 2, 2 ) )                                   # tiny! 2x2 bitmap
-    pygame.draw.line( colour_rect, left_colour,  ( 0,0 ), ( 0,1 ) )            # left colour line
-    pygame.draw.line( colour_rect, right_colour, ( 1,0 ), ( 1,1 ) )            # right colour line
-    colour_rect = pygame.transform.smoothscale( colour_rect, ( target_rect.width, target_rect.height ) )  # stretch!
-    new_rect = pygame.transform.rotate(colour_rect, c7)
-    window.blit( new_rect, target_rect )
-
 clock = pygame.time.Clock()
 
 pygame.display.set_caption("Colorful Stacked Patterns")
@@ -202,25 +187,14 @@ i = 0
 c1_seed = getseed(int(random.random()*200))
 c2_seed = getseed(int(random.random()*200))
 c3_seed = getseed(int(random.random()*200))
-
-c4_seed = getseed(int(random.random()*200))
-c5_seed = getseed(int(random.random()*200))
-c6_seed = getseed(int(random.random()*200))
-
-c7_seed = getseed(int(random.random()*200))
-
 c8_seed = getseed(int(random.random()*200))
-c9_seed = getseed(int(random.random()*200))
 
 c1, c2, c3 = generatekey(i, 0, c1_seed), generatekey(i, 0, c2_seed), generatekey(i, 0, c3_seed)
-c4, c5, c6 = generatekey(i, 0, c4_seed), generatekey(i, 0, c5_seed), generatekey(i, 0, c6_seed)
 
 display = pygame.display.set_mode((1280, 720))
 
-c7 = generatekey(i, 0, c7_seed)
 fullscreen = False
 while True:
-    #gradientRect(display, [int(c1), int(c2), int(c3)], [int(c4), int(c5), int(c6)], rect, c7)
     pygame.display.set_caption("Colorful Stacked Patterns")
 
     for event in pygame.event.get():
@@ -248,12 +222,6 @@ while True:
     c2 += generatekey(i, 0, c2_seed)*random.random()*5
     c3 += generatekey(i, 0, c3_seed)*random.random()*5
 
-    '''c4 += generatekey(i, 0, c4_seed)*random.random()*5
-    c5 += generatekey(i, 0, c5_seed)*random.random()*5
-    c6 += generatekey(i, 0, c6_seed)*random.random()*5
-
-    c7 += generatekey(i, 0, c7_seed)*random.random()*5'''
-
     if c1 > 255:
         c1 = 255
     elif c1 < 100:
@@ -269,28 +237,12 @@ while True:
     elif c3 < 0:
         c3 = 0
 
-    if c4 > 255:
-        c4 = 255
-    elif c4 < 100:
-        c4 = 100
-
-    if c5 > 255:
-        c5 = 255
-    elif c5 < 0:
-        c5 = 0
-
-    if c6 > 255:
-        c6 = 255
-    elif c6 < 0:
-        c6 = 0
-
     res = 8
     for x in range(int(display.get_width()/res)):
         for y in range(int(display.get_height()/res)):
             g = generatekey(x/30, y/30+i, c8_seed)
             if g > 0:
-                size = res
-                rect = pygame.Rect(x*size-size/2, y*size-size/2, size, size)
+                rect = pygame.Rect(x*res-res/2, y*res-res/2, res, res)
                 cq_1 = int(c1/(1-g))
                 cq_2 = int(c2/(1-g))
                 cq_3 = int(c3/(1-g))
@@ -309,11 +261,9 @@ while True:
                     cq_3 = 255
                 elif cq_3 < 0:
                     cq_3 = 0
-                bdr = 0
-                pygame.draw.rect(display, [cq_1, cq_2, cq_3], rect, border_radius=bdr)
 
-    #display.blit(image, (0, 0))
+                pygame.draw.rect(display, [cq_1, cq_2, cq_3], rect)
 
     pygame.display.flip()
     clock.tick(60)
-    i += 0.007 #0.002
+    i += 0.007
