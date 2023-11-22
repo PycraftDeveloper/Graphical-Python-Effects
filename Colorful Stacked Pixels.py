@@ -192,7 +192,7 @@ c8_seed = getseed(int(random.random()*200))
 
 c1, c2, c3 = generatekey(i, 0, c1_seed), generatekey(i, 0, c2_seed), generatekey(i, 0, c3_seed)
 
-display = pygame.display.set_mode((4096, 2160), pygame.FULLSCREEN)
+display = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
 fullscreen = False
 while True:
