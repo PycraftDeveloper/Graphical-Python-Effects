@@ -184,11 +184,6 @@ clock = pygame.time.Clock()
 
 start = time.perf_counter()
 
-def center_to_pygame(x, y, x_size=1920, y_size=1080):
-    new_x = x_size*x
-    new_y = y_size*y
-    return new_x, new_y
-
 radar = (1920/2, 1080/2)
 now_time = 0
 m = 0

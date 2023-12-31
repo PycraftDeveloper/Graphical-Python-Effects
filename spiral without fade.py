@@ -1,46 +1,4 @@
-import pygame, math, time, threading, pyaudio, os
 import numpy as np
-
-def get_audio_data():
-    global volume, v
-
-    # Audio variables
-    CHUNK = 2048#4096
-    RATE = 44100
-    power = 12
-
-    # Opens audio stream
-    p = pyaudio.PyAudio()
-    stream=p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True,frames_per_buffer=CHUNK)
-
-    mean = [0, 0]
-    volume = 0
-    v = 0
-    vmax = 0
-
-    while True:
-        # Reads the data
-        data = np.frombuffer(stream.read(CHUNK),dtype=np.int16)
-
-        # Calculates the peak of the frequency
-        peak = np.average(np.abs(data))*2
-
-        # Shows the bars for amplitude
-        if peak > mean[0]:
-            volume += 1
-        else:
-            volume -= volume/1.5
-
-        mean[0] = (mean[0]*mean[1] + peak)/(mean[1]+1)
-        mean[1] += 1
-
-        if peak > vmax:
-            vmax = peak
-        v = (peak/vmax)*500
-
-    stream.stop_stream()
-    stream.close()
-
 import pygame
 import math
 import time
@@ -49,7 +7,6 @@ import numpy as np
 from math import floor
 from ctypes import c_int64
 import random
-import sys
 import numba
 
 GRADIENTS2 = np.array([
@@ -222,26 +179,13 @@ def getseed(seed):
 
 pygame.init()
 
-display = pygame.display.set_mode((1000, 1000), vsync=1)
+display = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN, vsync=1)
 
 clock = pygame.time.Clock()
 
 start = time.perf_counter()
 
-global volume, v, vmax
-
-volume = 0
-v = 0
-
-threading.Thread(target=get_audio_data).start()
-
-def center_to_pygame(x, y, x_size=1000, y_size=1000):
-    new_x = x_size*x
-    new_y = y_size*y
-    return new_x, new_y
-
-radar = (500, 500)
-radar_len = 500
+radar = (1920/2, 1080/2)
 now_time = 0
 m = 0
 seed = getseed(random.randint(0, 10000000))
@@ -250,24 +194,29 @@ z = 0
 w = 0
 start = time.perf_counter()
 while True:
-    radar_len = int((1+generatekey(-z/500, -w/500, seed2))*250)
+    radar_len = int((1+generatekey(-z/500, -w/500, seed2))*(1080/4))
 
     x = radar[0] + math.cos(now_time) * radar_len
     y = radar[1] + math.sin(now_time) * radar_len
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            pygame.quit()
             quit()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
+                pygame.quit()
                 quit()
+
+            if event.key == pygame.K_SPACE:
+                display.fill([0, 0, 0])
 
     r = int((1+generatekey(z/500, w/500, seed))*(255/2))
     g = int((1+generatekey(z/500, -w/500, seed))*(255/2))
     b = int((1+generatekey(-z/500, w/500, seed))*(255/2))
 
     pygame.draw.line(display, [r, g, b], radar, (x, y), width=10)
-    pygame.draw.line(display, [r, g, b], radar, (1000-x, 1000-y), width=10)
+    pygame.draw.line(display, [r, g, b], radar, (1920-x, 1080-y), width=10)
 
     pygame.display.update()
     clock.tick(120)
