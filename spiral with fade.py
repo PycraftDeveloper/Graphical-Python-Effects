@@ -231,7 +231,7 @@ while True:
 
     Surface2.set_alpha(1) # 10
 
-    if f > int((1+generatekey(-z/1000, w/1000, seed))*(10/2)):
+    if f > int((1+generatekey(-z/1000, w/1000, seed))*(15/2)):
         display.blit(Surface2, (0, 0))
         f = 0
 
