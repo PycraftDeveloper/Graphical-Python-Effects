@@ -5,8 +5,8 @@ import time
 import random
 from math import floor
 from ctypes import c_int64
-import sys
 import numba
+from pygame import gfxdraw
 
 GRADIENTS2 = np.array([
     5, 2, 2, 5,
@@ -179,67 +179,45 @@ def getseed(seed):
 pygame.init()
 
 display = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN, vsync=1)
+#display = pygame.display.set_mode((1280, 720), vsync=1)
 
 clock = pygame.time.Clock()
 
-start = time.perf_counter()
+seed = getseed(random.randint(0, 100000))
+seedr = getseed(random.randint(0, 100000))
+seedg = getseed(random.randint(0, 100000))
+seedb = getseed(random.randint(0, 100000))
 
-radar = (1920/2, 1080/2)
-now_time = 0
-m = 0
-seed = getseed(random.randint(0, 10000000))
-seed2 = getseed(random.randint(0, 10000000))
-z = 0
-w = 0
-start = time.perf_counter()
-window_size = (1920, 1080)
-f = 0
+x = 0
 while True:
-    window_x, window_y = display.get_size()
-
-    Surface = pygame.Surface(window_size).convert()
-    Surface.fill((0, 0, 0))
-
-    Surface.set_colorkey((0, 0, 0))
-    Surface2 = pygame.Surface(window_size)
-
-    Surface2.fill((0, 0, 0))
-
-    radar_len = int((1+generatekey(-z/500, -w/500, seed2))*(1080/4))
-
-    x = radar[0] + math.cos(now_time) * radar_len
-    y = radar[1] + math.sin(now_time) * radar_len
+    display.fill([0, 0, 0])
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
-        if event.type == pygame.KEYDOWN:
+        elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
 
-            if event.key == pygame.K_SPACE:
-                display.fill([0, 0, 0])
+    color = [
+        (1+generatekey(x/100, 0, seedr))*127.5,
+        (1+generatekey(x/100, 0, seedg))*127.5,
+        (1+generatekey(x/100, 0, seedb))*127.5]
 
-    r = int((1+generatekey(z/500, w/500, seed))*(255/2))
-    g = int((1+generatekey(z/500, -w/500, seed))*(255/2))
-    b = int((1+generatekey(-z/500, w/500, seed))*(255/2))
+    for row in range(0, display.get_width(), 8):
+        for column in range(0, display.get_height(), 8):
+            color = [
+                (1+generatekey(x/100, row/1000, seedr))*127.5,
+                (1+generatekey(x/100, row/1000, seedg))*127.5,
+                (1+generatekey(x/100, row/1000, seedb))*127.5]
 
-    pygame.draw.line(Surface, [r, g, b], radar, (x, y), width=10)
-    pygame.draw.line(Surface, [r, g, b], radar, (1920-x, 1080-y), width=10)
+            r = display.get_width()/2 + row*generatekey((row+x)/1000, column/1000, seed)
+            c = display.get_height()/2 + column*generatekey(column/1000, (row+x)/1000, seed)
+            gfxdraw.pixel(display, int(r), int(c), color)
 
-    Surface2.set_alpha(1) # 10
-
-    if f > int((1+generatekey(-z/1000, w/1000, seed))*(15/2)):
-        display.blit(Surface2, (0, 0))
-        f = 0
-
-    display.blit(Surface, (0, 0))
+    x += 1
 
     pygame.display.flip()
-    clock.tick(500)
-    now_time = time.perf_counter()-start
-    z += 1
-    w -= 1
-    f += 1
+    clock.tick(60)
