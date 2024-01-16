@@ -57,13 +57,13 @@ NORM_CONSTANT2 = 47
 NORM_CONSTANT3 = 103
 NORM_CONSTANT4 = 30
 
-@numba.njit(cache=True)
+@numba.njit(cache=True, fastmath=True)
 def extrapolate2(perm, xsb, ysb, dx, dy):
     index = perm[(perm[xsb & 0xFF] + ysb) & 0xFF] & 0x0E
     g1, g2 = GRADIENTS2[index : index + 2]
     return g1 * dx + g2 * dy
 
-@numba.njit(cache=True)
+@numba.njit(cache=True, fastmath=True)
 def generatekey(x, y, perm):
     stretch_offset = (x + y) * STRETCH_CONSTANT2
 
@@ -190,9 +190,9 @@ seedg = getseed(random.randint(0, 100000))
 seedb = getseed(random.randint(0, 100000))
 
 x = 0
-while True:
-    display.fill([0, 0, 0])
 
+do_screen_clearing = 0
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -201,8 +201,26 @@ while True:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
-            if event.key == pygame.K_SPACE:
+            elif event.key == pygame.K_SPACE:
                 x += random.randint(100, 99999)
+            else:
+                do_screen_clearing += 1
+
+    if do_screen_clearing == 0:
+        display.fill([0, 0, 0])
+
+    if do_screen_clearing == 1:
+        window_size = display.get_size()
+
+        Surface = pygame.Surface(window_size).convert()
+        Surface.fill((0, 0, 0))
+
+        Surface.set_colorkey((0, 0, 0))
+        Surface2 = pygame.Surface(window_size)
+
+        Surface2.fill((0, 0, 0))
+
+    do_screen_clearing = do_screen_clearing % 3
 
     color = [
         (1+generatekey(x/100, 0, seedr))*127.5,
@@ -218,9 +236,19 @@ while True:
 
             r = display.get_width()/2 + row*generatekey((row+x)/1000, column/1000, seed)
             c = display.get_height()/2 + column*generatekey(column/1000, (row+x)/1000, seed)
-            gfxdraw.pixel(display, int(r), int(c), color)
+            if do_screen_clearing == 1:
+                gfxdraw.pixel(Surface, int(r), int(c), color)
+            else:
+                gfxdraw.pixel(display, int(r), int(c), color)
 
     x += 1
+
+    if do_screen_clearing == 1:
+        Surface2.set_alpha(1) # 10
+
+        display.blit(Surface2, (0, 0))
+
+        display.blit(Surface, (0, 0))
 
     pygame.display.flip()
     clock.tick(60)
