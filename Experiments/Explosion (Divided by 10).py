@@ -7,6 +7,7 @@ from math import floor
 from ctypes import c_int64
 import numba
 from pygame import gfxdraw
+import random
 
 GRADIENTS2 = np.array([
     5, 2, 2, 5,
@@ -200,6 +201,8 @@ while True:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 quit()
+            if event.key == pygame.K_SPACE:
+                x += random.randint(100, 99999)
 
     color = [
         (1+generatekey(x/100, 0, seedr))*127.5,
