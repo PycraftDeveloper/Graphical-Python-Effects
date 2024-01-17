@@ -1,11 +1,10 @@
-import pygame
-import random
-
-import numpy as np
-from math import floor
-from ctypes import c_int64
 import random
 import sys
+from math import floor
+from ctypes import c_int64
+
+import numpy as np
+import pygame
 import numba
 from pygame import gfxdraw
 

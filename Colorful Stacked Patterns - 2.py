@@ -1,7 +1,8 @@
-import pygame
-import moderngl
 import ctypes
 import sys
+
+import pygame
+import moderngl
 
 vertex_shader_sprite = """
 #version 330

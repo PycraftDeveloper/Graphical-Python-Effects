@@ -1,10 +1,9 @@
-import numpy as np
-import pygame
-import math
-import time
 import random
 from math import floor
 from ctypes import c_int64
+
+import numpy as np
+import pygame
 import numba
 from pygame import gfxdraw
 

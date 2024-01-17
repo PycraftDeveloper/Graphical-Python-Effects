@@ -1,12 +1,9 @@
-import pygame
-import math
-import time
-import random
-import numpy as np
 from math import floor
 from ctypes import c_int64
 import random
-import sys
+
+import pygame
+import numpy as np
 import numba
 
 GRADIENTS2 = np.array([
