@@ -10,12 +10,12 @@ To install all the required packages, you can use:
 # Additional Notes
 
 The following Python programs HAVE been turned into YouTube videos:
-* `Colorful Stacked Patterns - 2.py` in: [[1 hour version] 4K Colorful Stacked Patterns - 2](youtu.be/KA9hys-joQE)
+* `Colorful Stacked Patterns - 2.py` in: [[1 hour version] 4K Colorful Stacked Patterns - 2](https://youtu.be/KA9hys-joQE)
 * `Colorful Stacked Pixels.py` (This video has since been privated)
-* `Colorful Stacked Patterns.py` in: [[1 hour version] 4K Colorful Stacked Patterns](youtu.be/at-kU0d0fGU)
-* `orbits with fade.py` in: [[1 hour version] 4K Colored Orbits](youtu.be/zauAJ89Cln0)
-* `spiral with fade.py` in: [[1 hour version] 4K Spinner](youtu.be/KSYlL9piGGI)
-* `linear without fade.py` in: [[1 hour version] 4K Dancing Line](youtu.be/fnobAERwSkY)
+* `Colorful Stacked Patterns.py` in: [[1 hour version] 4K Colorful Stacked Patterns](https://youtu.be/at-kU0d0fGU)
+* `orbits with fade.py` in: [[1 hour version] 4K Colored Orbits](https://youtu.be/zauAJ89Cln0)
+* `spiral with fade.py` in: [[1 hour version] 4K Spinner](https://youtu.be/KSYlL9piGGI)
+* `linear without fade.py` in: [[1 hour version] 4K Dancing Line](https://youtu.be/fnobAERwSkY)
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
