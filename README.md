@@ -1,12 +1,24 @@
-# Coured-Perlin-Noise
-This Python code was used to create the Perlin noise effect found in the video here: https://www.youtube.com/watch?v=at-kU0d0fGU
+# Graphical Python Effects
+Welcome to Graphical Python Effects. This repository is where you will find the source code used to create the graphical effects seen in our popular YouTube series here: www.youtube.com/playlist?list=PLP_7YMAbPCtVm3xP_eahQa_1AuS04Yznb
 
-# Required programs
+# Installation
+This repository uses the programming language Python and does make use of 3rd party packages, a list of which can be found in the requirements.txt file.
 
-Pygame & Numba are the only required programs
+To install all the required packages, you can use:
+`pip install -r requirements.txt`
 
-This should be just download and run if you have the installed modules and python already!
-If you don't have Python, you can install that here: https://www.python.org/
-Then: ``pip install pygame numba``
+# Additional Notes
 
-Enjoy
+The following Python programs HAVE been turned into YouTube videos:
+* `Colorful Stacked Patterns - 2.py` in: [[1 hour version] 4K Colorful Stacked Patterns - 2](youtu.be/KA9hys-joQE)
+* `Colorful Stacked Pixels.py` (This video has since been privated)
+* `Colorful Stacked Patterns.py` in: [[1 hour version] 4K Colorful Stacked Patterns](youtu.be/at-kU0d0fGU)
+* `orbits with fade.py` in: [[1 hour version] 4K Colored Orbits](youtu.be/zauAJ89Cln0)
+* `spiral with fade.py` in: [[1 hour version] 4K Spinner](youtu.be/KSYlL9piGGI)
+* `linear without fade.py` in: [[1 hour version] 4K Dancing Line](youtu.be/fnobAERwSkY)
+
+The following Python programs WILL LIKELY be turned into YouTube videos soon:
+* `Colored Pixels.py`
+* `Colored Pixels (less points).py`
+* `Explosion (Divided by 10).py`
+* `spiral without fade.py`
