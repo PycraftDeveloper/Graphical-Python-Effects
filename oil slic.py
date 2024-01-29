@@ -217,10 +217,10 @@ while True:
         y = 0
         for x in range(x1, x2, -1):
             if x > 410 and x < 1510:
-                if not generatekey(x/100, (now_time+k)/75, seed) > 0 or generatekey(-(now_time-x)/10, (now_time+k)/10, seed) > 0:
-                    r = (255/2)*(1+generatekey(x/200, (now_time+k)/150, rseed))
-                    g = (255/2)*(1+generatekey((now_time+x)/150, k/200, gseed))
-                    b = (255/2)*(1+generatekey(x/200, (now_time+k)/150, bseed))
+                if not generatekey(x/100, (now_time+k)/150, seed) > 0 or generatekey(-(now_time-x)/15, (now_time+k)/15, seed) > 0:
+                    r = (255/2)*(1+generatekey(x/150, (now_time+k)/150, rseed))
+                    g = (255/2)*(1+generatekey((now_time+x)/150, k/150, gseed))
+                    b = (255/2)*(1+generatekey(x/150, (now_time+k)/150, bseed))
                     pygame.gfxdraw.pixel(display, x, y, (int(r), int(g), int(b)))
 
             y += 1
@@ -241,5 +241,4 @@ while True:
 
     pygame.display.flip()
     clock.tick(75)
-    print(clock.get_fps())
     now_time = time.perf_counter()-start
