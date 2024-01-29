@@ -22,3 +22,5 @@ The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels (less points).py`
 * `Explosion (Divided by 10).py`
 * `spiral without fade.py`
+* `oil slic.py`
+* `ant.py`
