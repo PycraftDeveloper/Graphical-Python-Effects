@@ -16,11 +16,12 @@ The following Python programs HAVE been turned into YouTube videos:
 * `orbits with fade.py` in: [[1 hour version] 4K Colored Orbits](https://youtu.be/zauAJ89Cln0)
 * `spiral with fade.py` in: [[1 hour version] 4K Spinner](https://youtu.be/KSYlL9piGGI)
 * `linear without fade.py` in: [[1 hour version] 4K Dancing Line](https://youtu.be/fnobAERwSkY)
+* `oil slic.py` in: Work in progress!
+* `colored breeze.py` in: Work in progress!
+* `Explosion (Divided by 10).py` in: Work in progress!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
 * `Colored Pixels (less points).py`
-* `Explosion (Divided by 10).py`
 * `spiral without fade.py`
-* `oil slic.py`
 * `ant.py`
