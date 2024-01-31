@@ -223,5 +223,5 @@ while True:
     c3 = breeze(c3, bseed, now_time)
 
     pygame.display.flip()
-    clock.tick(30)
+    clock.tick(60)
     now_time = time.perf_counter()-start
