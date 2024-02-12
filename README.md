@@ -17,8 +17,9 @@ The following Python programs HAVE been turned into YouTube videos:
 * `spiral with fade.py` in: [[1 hour version] 4K Spinner](https://youtu.be/KSYlL9piGGI)
 * `linear without fade.py` in: [[1 hour version] 4K Dancing Line](https://youtu.be/fnobAERwSkY)
 * `oil slic.py` in: [[1 hour version] 4K Iridescence](https://youtu.be/axAgNOKkE4k)
-* `colored breeze.py` in: Work in progress!
+* `colored breeze.py` in: [[1 hour version] 4K Colorwave](https://youtu.be/JFUCg2fv824)
 * `Explosion (Divided by 10).py` in: Work in progress!
+* `Colorful Stacked Patterns - 3.py` in: Work in progress!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
