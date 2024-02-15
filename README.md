@@ -20,6 +20,7 @@ The following Python programs HAVE been turned into YouTube videos:
 * `colored breeze.py` in: [[1 hour version] 4K Colorwave](https://youtu.be/JFUCg2fv824)
 * `Explosion (Divided by 10).py` in: Work in progress!
 * `Colorful Stacked Patterns - 3.py` in: Work in progress!
+* `Colorful Stacked Patterns - 4.py` in: Work in progress!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`

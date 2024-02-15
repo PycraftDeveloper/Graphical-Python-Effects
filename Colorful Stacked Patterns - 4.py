@@ -398,9 +398,9 @@ while 1:
                 group = ModernGLGroup(sprite_object)
                 gl_context.clear(0, 0, 0)
 
-    c1 = generatekey(now_time/50, 0, rseed)
-    c2 = generatekey(now_time/50, 0, gseed)
-    c3 = generatekey(now_time/50, 0, bseed)
+    c1 = generatekey(now_time/150, 0, rseed)
+    c2 = generatekey(now_time/150, 0, gseed)
+    c3 = generatekey(now_time/150, 0, bseed)
 
     if do_now_time:
         group.draw(window, (c1, c2, c3))
