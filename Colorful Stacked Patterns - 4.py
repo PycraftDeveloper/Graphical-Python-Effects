@@ -361,6 +361,8 @@ while 1:
     start = time.perf_counter()
     event_list = pygame.event.get()
     for event in event_list:
+        if event.type == pygame.FINGERDOWN:
+            print(event.dict)
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
