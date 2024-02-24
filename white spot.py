@@ -177,7 +177,7 @@ def getseed(seed):
     return perm
 
 class Point:
-    def __init__(self):
+    def __init__(self, n):
         self.x_seed = getseed(random.randint(0, 9999))
         self.y_seed = getseed(random.randint(0, 9999))
 
@@ -186,6 +186,8 @@ class Point:
 
         self.dir_x = (random.random()*2)-1
         self.dir_y = (random.random()*2)-1
+
+        self.n = n
 
     def render(self):
         v_x = (1+generatekey(now_time, 0, self.x_seed))*5
@@ -214,7 +216,7 @@ start = time.perf_counter()
 N = 1000
 points = []
 for _ in range(N):
-    points.append(Point())
+    points.append(Point(_))
 
 rseed = getseed(random.randint(0, 9999))
 gseed = getseed(random.randint(0, 9999))
