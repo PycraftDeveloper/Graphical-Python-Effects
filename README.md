@@ -31,3 +31,5 @@ The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `gradient colored breeze.py`
 * `radial breeze.py`
 * `rainy.py`
+* `perlin lines.py`
+* `perlin circles.py`
