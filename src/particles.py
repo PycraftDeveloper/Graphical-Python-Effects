@@ -1,10 +1,10 @@
-from traceback import format_exception
 try:
     import random
     import time
     import pmma
     import pygame.gfxdraw as gfxdraw
     import math
+    from traceback import format_exception
 
     canvas = pmma.Canvas()
     canvas.create_canvas(1280, 720)

@@ -185,9 +185,6 @@ def getseed(seed):
 
 import pmma
 
-audio_data = pmma.GetAudioData()
-audio_data.start_sampling()
-
 canvas = pmma.Canvas()
 canvas.create_canvas(1280, 720, False, True)
 
@@ -195,8 +192,6 @@ events = pmma.Events()
 
 registry = pmma.Registry()
 
-freq_arr = [0.00001]
-data = []
 fullscreen = False
 rseed = getseed(random.randint(0, 10000))
 gseed = getseed(random.randint(0, 10000))
@@ -219,7 +214,7 @@ while registry.running:
             b = k*(1+generatekey((now_time+x)/2000, 0, bseed))
             pygame.draw.circle(canvas.display, (r, g, b), c, x)
 
-        canvas.refresh(refresh_rate=75)
+        canvas.refresh(refresh_rate=30)
     except Exception as Message:
         print(Message)
     now_time = (time.perf_counter()-start)*1000
