@@ -19,9 +19,11 @@ The following Python programs HAVE been turned into YouTube videos:
 * `oil slic.py` in: [[1 hour version] 4K Iridescence](https://youtu.be/axAgNOKkE4k)
 * `colored breeze.py` in: [[1 hour version] 4K Colorwave](https://youtu.be/JFUCg2fv824)
 * `Explosion (Divided by 10).py` in: [[1 hour version] 4K Movement Mesh](https://youtu.be/Kysmr0__lL0)
-* `Colorful Stacked Patterns - 3.py` in: Work in progress!
-* `Colorful Stacked Patterns - 4.py` in: Work in progress!
-* `white spot.py` in: Work in progress!
+* `white spot.py` in: [[1 hour version] Radioactive](https://youtu.be/PbkRPgTXs2E)
+* `radial breeze.py` in: [[1 hour version] Radial Gradient](https://youtu.be/iDCFAEVO4Bs)
+* `snake ascension.py` in: [[1 hour version] Snake Ascension](https://youtu.be/DDWx2GfMw1c)
+* `snake expansion.py` in: Work in progress!
+* `colored light.py` in: Scheduled!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
@@ -29,7 +31,8 @@ The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `spiral without fade.py`
 * `ant.py`
 * `gradient colored breeze.py`
-* `radial breeze.py`
 * `rainy.py`
 * `perlin lines.py`
 * `perlin circles.py`
+* `Colorful Stacked Patterns - 3.py`
+* `Colorful Stacked Patterns - 4.py`
