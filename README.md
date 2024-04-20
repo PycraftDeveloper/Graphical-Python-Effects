@@ -22,7 +22,7 @@ The following Python programs HAVE been turned into YouTube videos:
 * `white spot.py` in: [[1 hour version] Radioactive](https://youtu.be/PbkRPgTXs2E)
 * `radial breeze.py` in: [[1 hour version] Radial Gradient](https://youtu.be/iDCFAEVO4Bs)
 * `snake ascension.py` in: [[1 hour version] Snake Ascension](https://youtu.be/DDWx2GfMw1c)
-* `snake expansion.py` in: Work in progress!
+* `snake expansion.py` in: [[1 hour version] 4K Expansion](https://youtu.be/1dpQ6pDfpAc)
 * `colored light.py` in: Scheduled!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
@@ -36,3 +36,9 @@ The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `perlin circles.py`
 * `Colorful Stacked Patterns - 3.py`
 * `Colorful Stacked Patterns - 4.py`
+* `distant horizons.py`
+* `firework particles.py`
+* `particles.py`
+* `particles expansion.py`
+* `snake expansion 2.py`
+* `snakes incoming.py`
