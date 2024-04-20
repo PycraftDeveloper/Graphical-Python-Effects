@@ -38,8 +38,8 @@ def scaler(surface):
     tempsurf.blit(surface, ((canvas.get_width()-surface.get_width())/2, (canvas.get_height()-surface.get_height())/2))
     return tempsurf
 
-canvas = pmma.Canvas()
-canvas.create_canvas(1280, 720)
+canvas = pmma.Display()
+canvas.create(1280, 720)
 
 events = pmma.Events()
 
