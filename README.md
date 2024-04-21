@@ -23,7 +23,8 @@ The following Python programs HAVE been turned into YouTube videos:
 * `radial breeze.py` in: [[1 hour version] Radial Gradient](https://youtu.be/iDCFAEVO4Bs)
 * `snake ascension.py` in: [[1 hour version] Snake Ascension](https://youtu.be/DDWx2GfMw1c)
 * `snake expansion.py` in: [[1 hour version] 4K Expansion](https://youtu.be/1dpQ6pDfpAc)
-* `colored light.py` in: Scheduled!
+* `colored light.py` in: [[1 hour version] 4K Coloured Orbs of Light](https://youtu.be/RXvL6IMpEOQ) and Scheduled!
+* `squares.py` in: Scheduled
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
