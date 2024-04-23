@@ -14,7 +14,7 @@ registry = pmma.Registry
 color_perlin = pmma.Perlin(random.randint(0, 9999))
 rotation_perlin = pmma.Perlin(random.randint(0, 9999))
 
-SWITCH = True
+SWITCH = False
 
 def draw_rectangle(x, y, width, height, color, rotation=0): # https://stackoverflow.com/a/73855696
     """Draw a rectangle, centered at x, y.
@@ -73,17 +73,17 @@ class Square:
         if SWITCH:
           self.n = rotation_perlin.generate_2D_perlin_noise(-(now_time+self.iter)/1000, 0, [0, 360]) # 500
         else:
-          self.n += 1
+          self.n += 0.5
 
 squares = []
 diag = int(math.sqrt(canvas.get_width()**2 + canvas.get_width()**2))
-for i in range(0, diag, 12):
+for i in range(0, diag, 8):
     squares.append(Square(diag-i))
 
 start = time.perf_counter()
 now_time = 0
 while registry.running:
-    k = time.perf_counter()
+    #k = time.perf_counter()
     center = (canvas.get_width()/2, canvas.get_height()/2)
 
     canvas.clear(pygame.transform.average_color(canvas.surface))
@@ -93,7 +93,6 @@ while registry.running:
     for square in squares:
         square.render(now_time)
 
-    canvas.refresh()
+    canvas.refresh(refresh_rate=15)
     now_time = time.perf_counter() - start
-    s = time.perf_counter()
-    #print(1/(s-k))
+    #s = time.perf_counter()
