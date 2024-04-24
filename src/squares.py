@@ -18,7 +18,7 @@ SWITCH = False
 
 def draw_rectangle(x, y, width, height, color, rotation=0): # https://stackoverflow.com/a/73855696
     """Draw a rectangle, centered at x, y.
-    All credit to Tim Swast for this function that helped make this possible!
+    All credit to Tim Swast for this `function that helped make this possible!
 
     Arguments:
       x (int/float):
