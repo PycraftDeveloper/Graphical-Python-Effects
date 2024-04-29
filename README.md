@@ -24,7 +24,7 @@ The following Python programs HAVE been turned into YouTube videos:
 * `snake ascension.py` in: [[1 hour version] Snake Ascension](https://youtu.be/DDWx2GfMw1c)
 * `snake expansion.py` in: [[1 hour version] 4K Expansion](https://youtu.be/1dpQ6pDfpAc)
 * `colored light.py` in: [[1 hour version] 4K Coloured Orbs of Light](https://youtu.be/RXvL6IMpEOQ) and Scheduled!
-* `squares.py` in: Scheduled
+* `squares.py` in: [[1 hour version] 4K Square Inception](https://youtu.be/hKbF_Vszz3M)
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
