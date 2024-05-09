@@ -201,8 +201,8 @@ while True:
                 quit()
             elif event.key == pygame.K_SPACE:
                 x += random.randint(100, 99999)
-            else:
-                do_screen_clearing += 1
+            #else:
+                #do_screen_clearing += 1
 
     if do_screen_clearing == 0:
         display.fill([0, 0, 0])
@@ -235,9 +235,9 @@ while True:
             r = display.get_width()/2 + int(row*generatekey((row+x)/1000, column/1000, seed))
             c = display.get_height()/2 + int(column*generatekey(column/1000, (row+x)/1000, seed))
             if do_screen_clearing == 1:
-                gfxdraw.pixel(Surface, int(r), int(c), color)
+                pygame.draw.circle(Surface, color, (int(r), int(c)), 1)
             else:
-                gfxdraw.pixel(display, int(r), int(c), color)
+                pygame.draw.circle(display, color, (int(r), int(c)), 1)
 
     x += 1
 
