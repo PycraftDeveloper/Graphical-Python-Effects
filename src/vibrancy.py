@@ -3,6 +3,7 @@ import random
 import time
 import pygame
 from PIL import Image, ImageFilter
+import math
 
 def display_to_string(surface, mode:str="RGBA") -> bytes:
     surface_image = pygame.image.tostring(
@@ -34,7 +35,7 @@ HALF_K = K/2
 
 def scaler(surface):
     tempsurf = pygame.Surface((canvas.get_width(), canvas.get_height()))
-    surface =  pygame.transform.smoothscale(surface, (canvas.get_width()+K, canvas.get_height()+K))
+    surface = pygame.transform.smoothscale(surface, (canvas.get_width()+K, canvas.get_height()+K))
     tempsurf.blit(surface, ((canvas.get_width()-surface.get_width())/2, (canvas.get_height()-surface.get_height())/2))
     return tempsurf
 
@@ -49,31 +50,32 @@ now_time = 0
 start = time.perf_counter()
 
 class Point:
-    def __init__(self):
+    def __init__(self, n):
         self.noise_x = pmma.Perlin(random.randint(0, 999999))
         self.noise_y = pmma.Perlin(random.randint(0, 999999))
 
         self.noise_s = pmma.Perlin(random.randint(0, 999999))
 
         self.noise_color = pmma.Perlin(random.randint(0, 999999))
+        self.n = n
 
     def compute(self):
-        self.x = self.noise_x.generate_2D_perlin_noise(now_time/5, 0, [0, canvas.get_width()])
-        self.y = self.noise_y.generate_2D_perlin_noise(now_time/5, 0, [0, canvas.get_height()])
-
         self.s = self.noise_s.generate_2D_perlin_noise(now_time/100, 0, [1, 10])
+
+        self.x = -40+(1920-math.sin(now_time + self.n)*self.noise_s.generate_2D_perlin_noise(0, now_time/10, [1, 500]))/2 # -40
+        self.y = -20+(1080-math.cos(now_time + self.n)*self.noise_s.generate_2D_perlin_noise(0, now_time/10, [1, 500]))/2 # -20
 
         self.r = self.noise_color.generate_2D_perlin_noise(now_time, 0, [0, 255])
         self.g = self.noise_color.generate_2D_perlin_noise(0, now_time, [0, 255])
         self.b = self.noise_color.generate_2D_perlin_noise(now_time, now_time, [0, 255])
 
     def render(self):
-        pygame.draw.circle(surface, (self.r, self.g, self.b), (self.x, self.y), self.s, width=2)
+        pygame.draw.circle(surface, (self.r, self.g, self.b), (self.x, self.y), self.s)
 
 points = []
 N = 20
-for i in range(20):
-    points.append(Point())
+for i in range(60):
+    points.append(Point(i))
 
 surface = pygame.Surface((canvas.get_width(), canvas.get_height()))
 
