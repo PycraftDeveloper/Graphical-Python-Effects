@@ -38,6 +38,7 @@ class Hexagon:
         self.size = n
         self.iter = n
         self.points = None
+        self.k = n
 
     def render(self, now_time):
         color = [
@@ -48,12 +49,12 @@ class Hexagon:
         if clear_cache:
             self.points = None
 
-        _, self.points = draw_ngon(canvas.surface, color, 6, self.size, center, rotation=self.n/(2*math.pi))
+        _, self.points = draw_ngon(canvas.surface, color, 6, self.size, center, rotation=self.k/(2*math.pi))
 
         if SWITCH:
-          self.n = rotation_perlin.generate_2D_perlin_noise(-(now_time+self.iter)/1000, 0, [0, 360]) # 500
+          self.k = rotation_perlin.generate_2D_perlin_noise(-(now_time+self.iter)/1000, 0, [0, 360]) # 500
         else:
-          self.n += 0.5
+          self.k += 0.1
 
 squares = []
 diag = int(math.sqrt(canvas.get_width()**2 + canvas.get_width()**2))
@@ -83,5 +84,5 @@ while registry.running:
     clear_cache = False
 
     canvas.refresh(refresh_rate=60)
-    now_time = time.perf_counter() - start
+    now_time = (time.perf_counter() - start)*5
     #s = time.perf_counter()
