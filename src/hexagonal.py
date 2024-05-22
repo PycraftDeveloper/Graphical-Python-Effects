@@ -9,6 +9,8 @@ canvas = pmma.Display()
 canvas.create(1280, 720)
 events = pmma.Events()
 
+UNIFORM = True
+
 registry = pmma.Registry
 
 color_perlin = pmma.Perlin(random.randint(0, 9999))
@@ -33,12 +35,13 @@ def draw_ngon(Surface, color, n, radius, position, rotation=0, width=0, wire_fra
     return pygame.draw.polygon(Surface, color, points, width=width), points
 
 class Hexagon:
-    def __init__(self, n):
+    def __init__(self, n, d):
         self.n = n/10
         self.size = n
         self.iter = n
         self.points = None
         self.k = n
+        self.d = d
 
     def render(self, now_time):
         color = [
@@ -53,13 +56,15 @@ class Hexagon:
 
         if SWITCH:
           self.k = rotation_perlin.generate_2D_perlin_noise(-(now_time+self.iter)/1000, 0, [0, 360]) # 500
+        elif UNIFORM:
+            self.k += 0.1
         else:
-          self.k += 0.1
+          self.k += (1-self.d)/2
 
 squares = []
 diag = int(math.sqrt(canvas.get_width()**2 + canvas.get_width()**2))
 for i in range(0, diag, 8):
-    squares.append(Hexagon(diag-i))
+    squares.append(Hexagon(diag-i, i/diag))
 
 clear_cache = False
 
