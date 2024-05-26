@@ -37,8 +37,8 @@ def line_function():
         points = []
         for i in range(100):
             points.append([x, y])
-            x += seed.generate_1D_perlin_noise((i + now_time/10)/100, range=[-10, 10])
-            y += seed.generate_1D_perlin_noise(-(i + now_time/10)/100, range=[-10, 10])
+            x += seed.generate_2D_perlin_noise((i + now_time/10)/100, 0, range=[-10, 10])
+            y += seed.generate_2D_perlin_noise(-(i + now_time/10)/100, 0, range=[-10, 10])
         pygame.draw.lines(surface, (255, 255, 255), False, points, width=1)
         k += 1
 
