@@ -3,28 +3,30 @@ import random
 import time
 import pygame
 
-canvas = pmma.Canvas()
-canvas.create_canvas(1280, 720)
+#pmma.init()
 
-events = pmma.Events()
+display = pmma.Display()
+display.create(1280, 720)
 
-registry = pmma.Registry()
+events = pmma.Events(display)
+
+draw = pmma.Draw(display)
 
 now_time = 0
 start = time.perf_counter()
 
 class Point:
     def __init__(self):
-        self.noise_x = pmma.Perlin(random.randint(0, 999999))
-        self.noise_y = pmma.Perlin(random.randint(0, 999999))
+        self.noise_x = pmma.Perlin()
+        self.noise_y = pmma.Perlin()
 
-        self.noise_s = pmma.Perlin(random.randint(0, 999999))
+        self.noise_s = pmma.Perlin()
 
-        self.noise_color = pmma.Perlin(random.randint(0, 999999))
+        self.noise_color = pmma.Perlin()
 
     def compute(self):
-        self.x = self.noise_x.generate_2D_perlin_noise(now_time/5, 0, [0, canvas.get_width()])
-        self.y = self.noise_y.generate_2D_perlin_noise(now_time/5, 0, [0, canvas.get_height()])
+        self.x = self.noise_x.generate_2D_perlin_noise(now_time/5, 0, [0, display.get_width()])
+        self.y = self.noise_y.generate_2D_perlin_noise(now_time/5, 0, [0, display.get_height()])
 
         self.s = self.noise_s.generate_2D_perlin_noise(now_time/100, 0, [1, 10])
 
@@ -33,23 +35,23 @@ class Point:
         self.b = self.noise_color.generate_2D_perlin_noise(now_time, now_time, [0, 255])
 
     def render(self):
-        pygame.draw.circle(canvas.display, (self.r, self.g, self.b), (self.x, self.y), self.s)
+        draw.circle((self.r, self.g, self.b), (self.x, self.y), self.s)
 
 points = []
 N = 20
-for i in range(20):
+for i in range(N):
     points.append(Point())
 
-surface = pygame.Surface((canvas.get_width(), canvas.get_height()))
+surface = pygame.Surface((display.get_width(), display.get_height()))
 
-while registry.running:
-    canvas.clear(0, 0, 0)
+while pmma.Registry.running:
+    display.clear(0, 0, 0)
 
-    events.handle(canvas)
+    events.handle()
 
     for point in points:
         point.compute()
         point.render()
 
-    canvas.refresh()
+    display.refresh()
     now_time = time.perf_counter()-start
