@@ -1,7 +1,6 @@
 import pmma
 import time
 import pygame
-import random
 
 display = pmma.Display()
 display.create(1920, 1080, fullscreen=True)
