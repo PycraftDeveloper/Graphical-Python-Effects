@@ -1,5 +1,7 @@
 import pmma
 
+pmma.init()
+
 import pygame
 
 import time
@@ -17,7 +19,7 @@ draw = pmma.Draw(canvas=display)
 
 start = time.perf_counter()
 now_time = 0
-number_of_circles = int(math.pythag(*display.get_size()))
+number_of_circles = int(math.pythag(display.get_size()))
 
 surface = pygame.Surface(display.get_size())
 rect = pygame.Rect(500, 300, 200, 200)
