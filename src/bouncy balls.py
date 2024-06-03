@@ -34,16 +34,20 @@ class Ball:
         if self.x > display.get_width()-self.mass:
             self.x = display.get_width()-self.mass
             self.dir_x *= -1
+            pygame.draw.circle(Surface, [random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)], (self.x, self.y), self.mass*2, width=1)
         elif self.x < self.mass:
             self.x = self.mass
             self.dir_x *= -1
+            pygame.draw.circle(Surface, [random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)], (self.x, self.y), self.mass*2, width=1)
 
         if self.y > display.get_height()-self.mass:
             self.y = display.get_height()-self.mass
             self.dir_y *= -1
+            pygame.draw.circle(Surface, [random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)], (self.x, self.y), self.mass*2, width=1)
         elif self.y < self.mass:
             self.y = self.mass
             self.dir_y *= -1
+            pygame.draw.circle(Surface, [random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)], (self.x, self.y), self.mass*2, width=1)
 
         if time.perf_counter()-self.last_collision_time > 1/15:
             for ball in balls:
@@ -60,6 +64,8 @@ class Ball:
                     ball.last_collision_time = time.perf_counter()
                     self.color = [random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)]
                     ball.color = [random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)]
+                    pygame.draw.circle(Surface, [random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)], (self.x, self.y), self.mass*2, width=1)
+                    pygame.draw.circle(Surface, [random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)], (ball.x, ball.y), ball.mass*2, width=1)
 
 
     def render(self):
