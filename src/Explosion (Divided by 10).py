@@ -2,6 +2,7 @@ import random
 import pygame
 
 import pmma
+
 pmma.init()
 
 display = pmma.Display()
@@ -17,6 +18,8 @@ seedg = pmma.Perlin()
 seedb = pmma.Perlin()
 
 x = 0
+
+N = 10
 
 do_screen_clearing = 0
 while pmma.Registry.running:
@@ -44,21 +47,21 @@ while pmma.Registry.running:
 
     do_screen_clearing = do_screen_clearing % 3
 
-    for row in range(0, display.get_width(), 10):
+    for row in range(0, display.get_width(), N):
         color = [
                 seedr.generate_2D_perlin_noise(x/100, row/1000, range=[0, 255]),
                 seedg.generate_2D_perlin_noise(x/100, row/1000, range=[0, 255]),
                 seedb.generate_2D_perlin_noise(x/100, row/1000, range=[0, 255])]
 
-        for column in range(0, display.get_height(), 10):
+        for column in range(0, display.get_height(), N):
             r = display.get_width()/2 + int(row*seed.generate_2D_perlin_noise((row+x)/2000, column/2000))
             c = display.get_height()/2 + int(column*seed.generate_2D_perlin_noise(column/2000, (row+x)/2000))
             if do_screen_clearing == 1:
                 pygame.draw.circle(Surface, color, (int(r), int(c)), 1)
             else:
-                draw.circle(color, (int(r), int(c)), 1)
+                draw.circle(color, (int(r), int(c)), 1) # 10 is a good size
 
-    x += 1
+    x += 10.304891701056123
 
     if do_screen_clearing == 1:
         Surface2.set_alpha(10) # 10
