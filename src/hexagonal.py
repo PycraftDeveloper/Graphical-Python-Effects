@@ -5,9 +5,11 @@ import pmma
 import pygame
 import math
 
+pmma.init()
+
 canvas = pmma.Display()
 canvas.create(1280, 720)
-events = pmma.Events()
+events = pmma.Events(canvas)
 
 UNIFORM = True
 
@@ -52,7 +54,7 @@ class Hexagon:
         if clear_cache:
             self.points = None
 
-        _, self.points = draw_ngon(canvas.surface, color, 6, self.size, center, rotation=self.k/(2*math.pi))
+        _, self.points = draw_ngon(canvas.surface, color, 3, self.size, center, rotation=self.k/(2*math.pi))
 
         if SWITCH:
           self.k = rotation_perlin.generate_2D_perlin_noise(-(now_time+self.iter)/1000, 0, [0, 360]) # 500
@@ -63,7 +65,7 @@ class Hexagon:
 
 squares = []
 diag = int(math.sqrt(canvas.get_width()**2 + canvas.get_width()**2))
-for i in range(0, diag, 8):
+for i in range(0, diag, 4):
     squares.append(Hexagon(diag-i, i/diag))
 
 clear_cache = False
@@ -76,7 +78,7 @@ while registry.running:
 
     canvas.clear(pygame.transform.average_color(canvas.surface))
 
-    event = events.handle(canvas)
+    event = events.handle()
     for e in event:
         if e.type == pygame.KEYDOWN:
             if e.key == pygame.K_F11:
