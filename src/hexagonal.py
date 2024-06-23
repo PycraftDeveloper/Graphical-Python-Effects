@@ -54,7 +54,7 @@ class Hexagon:
         if clear_cache:
             self.points = None
 
-        _, self.points = draw_ngon(canvas.surface, color, 3, self.size, center, rotation=self.k/(2*math.pi))
+        _, self.points = draw_ngon(canvas.surface, color, 4, self.size, center, rotation=self.k/(2*math.pi))
 
         if SWITCH:
           self.k = rotation_perlin.generate_2D_perlin_noise(-(now_time+self.iter)/1000, 0, [0, 360]) # 500
@@ -65,7 +65,7 @@ class Hexagon:
 
 squares = []
 diag = int(math.sqrt(canvas.get_width()**2 + canvas.get_width()**2))
-for i in range(0, diag, 4):
+for i in range(0, diag, 5): # 10
     squares.append(Hexagon(diag-i, i/diag))
 
 clear_cache = False
@@ -74,6 +74,7 @@ start = time.perf_counter()
 now_time = 0
 center = (canvas.get_width()/2, canvas.get_height()/2)
 while registry.running:
+    print(canvas.get_fps())
     #k = time.perf_counter()
 
     canvas.clear(pygame.transform.average_color(canvas.surface))
