@@ -27,6 +27,8 @@ The following Python programs HAVE been turned into YouTube videos:
 * `squares.py` in: [[1 hour version] 4K Square Inception](https://youtu.be/hKbF_Vszz3M)
 * `hexagonal.py` in: [[1 hour version] Cascading Scales](https://youtu.be/OYRjXmrKs6s)
 * `linear 2 with fade.py` in: [[1 hour version] Aurora](https://youtu.be/7t_teUYG0QU)
+* `triangular.py` in: [[1 hour version] Triangular Flower](https://youtu.be/oktepKV_roo)
+* `cubes 2.py` in: To be released
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
@@ -47,3 +49,7 @@ The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `snakes incoming.py`
 * `vibrancy.py`
 * `bouncy balls.py`
+* `cubes.py`
+* `menger sponge.py`
+* `fan.py`
+* `circular oscillator.py`
