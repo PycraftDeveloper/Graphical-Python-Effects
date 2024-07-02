@@ -9,7 +9,7 @@ import pygame
 display = pmma.Display()
 display.create(1280, 720)
 
-events = pmma.Events(display)
+events = pmma.Events()
 
 registry = pmma.Registry()
 

@@ -15,7 +15,7 @@ noise = pmma.Perlin()
 pygame.init()
 info = pygame.display.Info()
 width, height = info.current_w, info.current_h
-screen = pygame.display.set_mode((width, height), DOUBLEBUF | OPENGL | pygame.FULLSCREEN, vsync=True)
+screen = pygame.display.set_mode((width, height), DOUBLEBUF | OPENGL | pygame.NOFRAME, vsync=True)
 pygame.display.set_caption('3D Grid of Variable-Height Cuboids')
 
 # Create ModernGL context
@@ -35,7 +35,7 @@ void main() {
     if (length(vec2(in_offset.x, in_offset.z)) > 50) {
         v_color = vec4(0, 0, 0, 0);
     } else {
-        v_color = vec4(in_color, (in_offset.y/20));
+        v_color = vec4(in_color*(0.2+(in_offset.y/15)), 0.5);
     }
 }
 '''
@@ -139,7 +139,7 @@ while running:
             running = False
 
     # Clear the screen
-    ctx.clear(0.1, 0.1, 0.1, 1.0)
+    ctx.clear(0.0, 0.0, 0.0, 1.0)
     ctx.enable(moderngl.DEPTH_TEST | moderngl.BLEND)
 
     # Rotate the camera around the grid
@@ -147,7 +147,7 @@ while running:
     x = 55 * np.sin(angle/2)
     y = 55 * np.cos(angle/2)
     view = Matrix44.look_at(
-        eye=Vector3([x, 15, y]), # 1+noise.generate_2D_perlin_noise((int(x)/20)+now_time, (int(y)/20)+now_time, range=[0, 4])
+        eye=Vector3([x, 10, y]), # 1+noise.generate_2D_perlin_noise((int(x)/20)+now_time, (int(y)/20)+now_time, range=[0, 4])
         target=Vector3([0, 0, 0]),
         up=Vector3([0, 1, 0])
     )
