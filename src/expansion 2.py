@@ -20,7 +20,7 @@ backpack = pmma.Backpack
 
 math = pmma.Math()
 
-scale = 2
+scale = 4
 
 class Circle:
     def __init__(self, x, y, radius, color):
@@ -38,7 +38,6 @@ render_pipeline = []
 start = time.perf_counter()
 now_time = 0
 while backpack.running:
-    print(display.get_fps())
     display.clear(pygame.transform.average_color(display.surface))
     events.handle()
 
@@ -54,5 +53,5 @@ while backpack.running:
         if element.radius > display.get_width():
             render_pipeline.remove(element)
 
-    display.refresh(refresh_rate=14)
+    display.refresh(refresh_rate=7)
     now_time = (time.perf_counter() - start)/scale
