@@ -11,7 +11,7 @@ g_noise = pmma.Perlin()
 b_noise = pmma.Perlin()
 
 display = pmma.Display()
-display.create(1280, 720, fullscreen=True)
+display.create(1920, 1080, fullscreen=True)
 
 events = pmma.Events()
 
@@ -20,6 +20,8 @@ draw = pmma.Draw(canvas=display)
 backpack = pmma.Backpack
 
 math = pmma.Math()
+
+scale = 2
 
 class Circle:
     def __init__(self, x, y, radius, color):
@@ -30,13 +32,14 @@ class Circle:
 
     def render(self):
         draw.circle(self.color, (self.x, self.y), self.radius)
-        self.radius += 10
+        self.radius += 10/scale
 
 render_pipeline = []
 
 start = time.perf_counter()
 now_time = 0
 while backpack.running:
+    print(display.get_fps())
     display.clear(pygame.transform.average_color(display.surface))
     events.handle()
 
@@ -46,10 +49,11 @@ while backpack.running:
 
     c = Circle(x_noise.generate_1D_perlin_noise(now_time/4, range=[50, display.get_width()-50]), y_noise.generate_1D_perlin_noise(now_time/4, range=[50, display.get_height()-50]), 100, col)
     render_pipeline.append(c)
-    for element in render_pipeline:
+    copy = render_pipeline.copy()
+    for element in copy:
         element.render()
         if element.radius > display.get_width():
             render_pipeline.remove(element)
 
-    display.refresh()
-    now_time = time.perf_counter() - start
+    display.refresh(refresh_rate=14)
+    now_time = (time.perf_counter() - start)/scale
