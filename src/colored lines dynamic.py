@@ -3,7 +3,6 @@ import pmma
 import pygame
 
 import time
-import threading
 
 display = pmma.Display()
 display.create(1280, 720)
@@ -18,7 +17,7 @@ draw = pmma.Draw(canvas=display)
 
 start = time.perf_counter()
 now_time = 0
-number_of_circles = int(math.pythag(*display.get_size()))
+number_of_circles = int(math.pythag(display.get_size()))
 
 surface = pygame.Surface(display.get_size())
 rect = pygame.Rect(500, 300, 200, 200)
@@ -36,8 +35,8 @@ def line_function():
         points = []
         for i in range(25):
             points.append([x, y])
-            x += seed.generate_2D_perlin_noise((i + t)/100, 0, range=[-20, 20])
-            y += seed.generate_2D_perlin_noise(-(i + t)/100, 0, range=[-20, 20])
+            x += seed.generate_2D_perlin_noise((i + t)/100, 0, new_range=[-20, 20])
+            y += seed.generate_2D_perlin_noise(-(i + t)/100, 0, new_range=[-20, 20])
         pygame.draw.lines(surface, (255, 255, 255), False, points, width=1)
 
 while True:
@@ -48,9 +47,9 @@ while True:
     for r in range(number_of_circles, 0, -25):
         ar = (now_time + r) / 500
         color = [
-            background_perlin.generate_2D_perlin_noise(ar, 0, range=[0, 255]),
-            background_perlin.generate_2D_perlin_noise(0, ar, range=[0, 255]),
-            background_perlin.generate_2D_perlin_noise(-ar, 0, range=[0, 255])]
+            background_perlin.generate_2D_perlin_noise(ar, 0, new_range=[0, 255]),
+            background_perlin.generate_2D_perlin_noise(0, ar, new_range=[0, 255]),
+            background_perlin.generate_2D_perlin_noise(-ar, 0, new_range=[0, 255])]
         draw.circle(color, center, r)
 
     event_arr = events.handle()
