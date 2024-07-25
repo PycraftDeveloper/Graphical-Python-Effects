@@ -27,9 +27,15 @@ class Wave:
                 self.color[2].generate_1D_perlin_noise((now_time)/25, new_range=[0, 255])]
 
         points = [(0, display.get_height())]
-        for x in range(display.get_width()):
-            height = self.heights.generate_1D_perlin_noise((x/500)+(-now_time/5), new_range=[0, display.get_height()])
-            points.append((x, height))
+        height = self.heights.generate_1D_perlin_noise((-now_time/5), new_range=[0, display.get_height()])
+        self.points.append(height)
+        if len(self.points) > display.get_width():
+            del self.points[0]
+
+        x = 0
+        for point in self.points:
+            points.append((x, point))
+            x += 1
 
         points.append((display.get_width(), display.get_height()))
 
