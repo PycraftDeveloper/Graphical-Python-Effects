@@ -59,3 +59,4 @@ while pmma.Registry.running:
 
     display.refresh()
     now_time = time.perf_counter() - start
+
