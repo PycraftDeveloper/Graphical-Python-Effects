@@ -41,11 +41,11 @@ while backpack.running:
     display.clear(pygame.transform.average_color(display.surface))
     events.handle()
 
-    col = [r_noise.generate_1D_perlin_noise(now_time/7, range=[0, 255]),
-            g_noise.generate_1D_perlin_noise(now_time/7, range=[0, 255]),
-            b_noise.generate_1D_perlin_noise(now_time/7, range=[0, 255])]
+    col = [r_noise.generate_1D_perlin_noise(now_time/7, new_range=[0, 255]),
+            g_noise.generate_1D_perlin_noise(now_time/7, new_range=[0, 255]),
+            b_noise.generate_1D_perlin_noise(now_time/7, new_range=[0, 255])]
 
-    c = Circle(display.get_width() // 2, noise.generate_1D_perlin_noise(now_time/4, range=[50, display.get_height()-50]), 100, col)
+    c = Circle(display.get_width() // 2, noise.generate_1D_perlin_noise(now_time/4, new_range=[50, display.get_height()-50]), 100, col)
     render_pipeline.append(c)
     copy = render_pipeline.copy()
     for element in copy:

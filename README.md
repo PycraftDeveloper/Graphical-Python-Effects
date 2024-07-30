@@ -28,7 +28,10 @@ The following Python programs HAVE been turned into YouTube videos:
 * `hexagonal.py` in: [[1 hour version] Cascading Scales](https://youtu.be/OYRjXmrKs6s)
 * `linear 2 with fade.py` in: [[1 hour version] Aurora](https://youtu.be/7t_teUYG0QU)
 * `triangular.py` in: [[1 hour version] Triangular Flower](https://youtu.be/oktepKV_roo)
-* `cubes 2.py` in: To be released
+* `expansion 2.py` in: [[1 hour version] Vertical Paint Expansion](https://youtu.be/9tg38xxOypE)
+* `cubes 2.py` in: [[1 hour version] Spinning Sea of Cubes](https://youtu.be/KeQ9h-Ip0z4)
+* `2d expansion.py` in: To be released
+* `meneger sponge.py` in: To be released
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
@@ -44,12 +47,18 @@ The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `distant horizons.py`
 * `firework particles.py`
 * `particles.py`
-* `particles expansion.py` #
-* `snake expansion 2.py` #
+* `particles expansion.py`
+* `snake expansion 2.py`
 * `snakes incoming.py`
 * `vibrancy.py`
 * `bouncy balls.py`
 * `cubes.py`
-* `menger sponge.py`
+* `point matrix.py`
 * `fan.py`
 * `circular oscillator.py`
+* `colored lines dynamic.py`
+* `colored lines.py`
+* `depth based particles.py`
+* `nth gradient.py`
+* `planar.py`
+* `waves.py`

@@ -1,166 +1,172 @@
-import pygame
+import glfw
 import moderngl
 import numpy as np
+from pyrr import Matrix44
+import time
 import math
+import pmma
 
-# Recursive function to create the Menger Sponge vertices and indices
-def generate_menger_sponge(level, size):
-    if level == 0:
-        half_size = size / 2.0
-        vertices = [
-            [-half_size, -half_size, -half_size],  # Bottom-left-back
-            [ half_size, -half_size, -half_size],  # Bottom-right-back
-            [ half_size,  half_size, -half_size],  # Top-right-back
-            [-half_size,  half_size, -half_size],  # Top-left-back
-            [-half_size, -half_size,  half_size],  # Bottom-left-front
-            [ half_size, -half_size,  half_size],  # Bottom-right-front
-            [ half_size,  half_size,  half_size],  # Top-right-front
-            [-half_size,  half_size,  half_size]   # Top-left-front
-        ]
-        # Cube faces
-        indices = [
-            [0, 1, 2, 3],  # Back face
-            [4, 5, 6, 7],  # Front face
-            [0, 1, 5, 4],  # Bottom face
-            [3, 2, 6, 7],  # Top face
-            [0, 3, 7, 4],  # Left face
-            [1, 2, 6, 5]   # Right face
-        ]
-        return vertices, indices
-    else:
-        sub_size = size / 3.0
-        vertices = []
-        indices = []
-        sub_vertices, sub_indices = generate_menger_sponge(level - 1, sub_size)
+def generate_menger_sponge(iterations):
+    def recurse(level, x, y, z, size, vertices, vertex_normals):
+        if level == 0:
+            half = size / 2
+            offsets = np.array([
+                [x - half, y - half, z - half],
+                [x + half, y - half, z - half],
+                [x + half, y + half, z - half],
+                [x - half, y + half, z - half],
+                [x - half, y - half, z + half],
+                [x + half, y - half, z + half],
+                [x + half, y + half, z + half],
+                [x - half, y + half, z + half]
+            ])
+            faces = np.array([
+                [0, 1, 2], [2, 3, 0], # Front face
+                [4, 5, 6], [6, 7, 4], # Back face
+                [0, 1, 5], [5, 4, 0], # Bottom face
+                [2, 3, 7], [7, 6, 2], # Top face
+                [1, 2, 6], [6, 5, 1], # Right face
+                [0, 3, 7], [7, 4, 0]  # Left face
+            ])
+            face_normals = np.array([
+                [0, 0, -1], [0, 0, -1],
+                [0, 0, 1], [0, 0, 1],
+                [0, -1, 0], [0, -1, 0],
+                [0, 1, 0], [0, 1, 0],
+                [1, 0, 0], [1, 0, 0],
+                [-1, 0, 0], [-1, 0, 0]
+            ])
+            vertices.extend(offsets[faces].reshape(-1, 3))
+            vertex_normals.extend(np.repeat(face_normals, 3, axis=0))
+        else:
+            new_size = size / 3
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    for dz in (-1, 0, 1):
+                        if (dx, dy, dz).count(0) < 2:
+                            recurse(level - 1, x + dx * new_size, y + dy * new_size, z + dz * new_size, new_size, vertices, vertex_normals)
 
-        # Create the sponge pattern
-        for x in range(3):
-            for y in range(3):
-                for z in range(3):
-                    if (x == 1 and y == 1) or (x == 1 and z == 1) or (y == 1 and z == 1):
-                        continue
-                    offset = [(x - 1) * sub_size, (y - 1) * sub_size, (z - 1) * sub_size]
-                    for v in sub_vertices:
-                        vertices.append([v[i] + offset[i] for i in range(3)])
-                    base_index = len(vertices) - len(sub_vertices)
-                    for face in sub_indices:
-                        indices.append([base_index + i for i in face])
-        return vertices, indices
+    vertices = []
+    vertex_normals = []
+    recurse(iterations, 0, 0, 0, 1, vertices, vertex_normals)
+    return np.array(vertices, dtype='f4'), np.array(vertex_normals, dtype='f4')
 
-def main():
-    pygame.init()
-    pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
-    pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
-    pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
-    screen = pygame.display.set_mode((1920, 1080), pygame.OPENGL | pygame.DOUBLEBUF | pygame.FULLSCREEN)
-    clock = pygame.time.Clock()
+# Initialize GLFW
+if not glfw.init():
+    raise Exception("GLFW can not be initialized!")
 
-    ctx = moderngl.create_context()
+# Create a window
+monitor = glfw.get_primary_monitor()
+window = glfw.create_window(1920, 1080, "Menger Sponge", monitor, None)
+if not window:
+    glfw.terminate()
+    raise Exception("GLFW window can not be created!")
 
-    # Generate initial Menger Sponge data
-    level = 4  # Start with level 1
-    vertices, indices = generate_menger_sponge(level, 1.0)
+near_perlin = [pmma.Perlin(), pmma.Perlin(), pmma.Perlin()]
+far_perlin = [pmma.Perlin(), pmma.Perlin(), pmma.Perlin()]
 
-    # Flatten the vertex and index data
-    vertex_data = np.array(vertices, dtype='f4').flatten()
-    index_data = np.array(indices, dtype='i4').flatten()
+glfw.make_context_current(window)
+ctx = moderngl.create_context()
 
-    # Vertex shader
-    vertex_shader = '''
-    #version 330
-    in vec3 in_position;
-    uniform mat4 model;
-    uniform mat4 view;
-    uniform mat4 projection;
-    out vec3 frag_color;
-    void main() {
-        frag_color = vec3(1.0, 0.5, 0.3);  // Base color
-        gl_Position = projection * view * model * vec4(in_position, 1.0);
-    }
-    '''
+vertex_shader_source = """
+#version 330
+in vec3 in_position;
+in vec3 in_normal;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+out vec3 frag_normal;
+out vec3 frag_position;
+void main() {
+    frag_normal = in_normal;
+    frag_position = vec3(model * vec4(in_position, 1.0));
+    gl_Position = projection * view * model * vec4(in_position, 1.0);
+}
+"""
 
-    # Fragment shader
-    fragment_shader = '''
-    #version 330
-    in vec3 frag_color;
-    out vec4 out_color;
-    void main() {
-        out_color = vec4(frag_color, 1.0);
-    }
-    '''
+fragment_shader_source = """
+#version 330
+in vec3 frag_normal;
+in vec3 frag_position;
+out vec4 FragColor;
+uniform vec3 near_color;
+uniform vec3 far_color;
 
-    program = ctx.program(vertex_shader=vertex_shader, fragment_shader=fragment_shader)
+void main() {
+    float distance = length(frag_position);
+    float t = distance;  // Adjust the divisor for the distance range
+    t = clamp(t, 0.0, 1.0);
+    vec3 color = mix(near_color, far_color, t);
 
-    # Buffers
-    vbo = ctx.buffer(vertex_data)
-    ibo = ctx.buffer(index_data)
+    vec3 result = color;
+    FragColor = vec4(result, 1.0);
+}
+"""
 
-    vao = ctx.vertex_array(program, [
-        (vbo, '3f', 'in_position')
-    ], ibo)
+prog = ctx.program(
+    vertex_shader=vertex_shader_source,
+    fragment_shader=fragment_shader_source,
+)
 
-    # Matrices
-    projection = np.array([
-        [1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, -2 / (10 - 0.1), - (10 + 0.1) / (10 - 0.1)],
-        [0, 0, 0, 1]
-    ], dtype='f4')
+iterations = 1
+vertices, normals = generate_menger_sponge(iterations)
+vbo = ctx.buffer(vertices.tobytes())
+nbo = ctx.buffer(normals.tobytes())
 
-    angle_x = 0
-    angle_y = 0
-    zoom = -1
+vao = ctx.vertex_array(prog, [
+    (vbo, '3f', 'in_position'),
+    (nbo, '3f', 'in_normal')
+])
 
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    running = False
-                elif event.key == pygame.K_UP and level < 4:
-                    level += 1
-                    vertices, indices = generate_menger_sponge(level, 1.0)
-                    vertex_data = np.array(vertices, dtype='f4').flatten()
-                    index_data = np.array(indices, dtype='i4').flatten()
-                    vbo.write(vertex_data)
-                    ibo.write(index_data)
-                elif event.key == pygame.K_DOWN and level > 0:
-                    level -= 1
-                    vertices, indices = generate_menger_sponge(level, 1.0)
-                    vertex_data = np.array(vertices, dtype='f4').flatten()
-                    index_data = np.array(indices, dtype='i4').flatten()
-                    vbo.write(vertex_data)
-                    ibo.write(index_data)
+view = Matrix44.look_at(
+    (1.31, 1.31, 1.31),
+    (0.0, 0.0, 0.0),
+    (0.0, 1.0, 0.0),
+)
+projection = Matrix44.perspective_projection(45.0, 1920 / 1080, 0.1, 10.0)
 
-        # Update angle for rotation
-        angle_x += 0.001
-        angle_y += 0.001
+prog['view'].write(view.astype('f4'))
+prog['projection'].write(projection.astype('f4'))
 
-        # Model matrix
-        model = np.array([
-            [math.cos(angle_y), 0, math.sin(angle_y), 0],
-            [0, 1, 0, 0],
-            [-math.sin(angle_y), 0, math.cos(angle_y), 0],
-            [0, 0, -zoom, 1]
-        ], dtype='f4')
+# Set near and far colors
+near_color = (0.0, 0.0, 1.0)  # Blue
+far_color = (1.0, 0.0, 0.0)   # Red
+prog['near_color'].value = near_color
+prog['far_color'].value = far_color
 
-        view = np.identity(4, dtype='f4')
+def update_buffer(vertices, normals):
+    global vbo, nbo, vao
+    vbo.release()
+    nbo.release()
+    vbo = ctx.buffer(vertices.tobytes())
+    nbo = ctx.buffer(normals.tobytes())
+    vao = ctx.vertex_array(prog, [
+        (vbo, '3f', 'in_position'),
+        (nbo, '3f', 'in_normal')
+    ])
 
-        ctx.clear(0.1, 0.1, 0.1)
-        ctx.enable(moderngl.DEPTH_TEST)
+iterations = 5
+vertices, normals = generate_menger_sponge(iterations)
+update_buffer(vertices, normals)
 
-        program['model'].write(model.tobytes())
-        program['view'].write(view.tobytes())
-        program['projection'].write(projection.tobytes())
+ctx.enable(moderngl.DEPTH_TEST)  # Enable depth testing
+ctx.front_face = 'ccw'
+ctx.enable(moderngl.CULL_FACE)  # Enable face culling
+ctx.cull_face = 'back'  # Cull back faces
 
-        vao.render(moderngl.POINTS)
+while not glfw.window_should_close(window):
+    glfw.poll_events()
 
-        pygame.display.flip()
-        clock.tick(60)
+    angle = glfw.get_time() / 2
+    timer = angle/10
+    prog['near_color'].value = (near_perlin[0].generate_1D_perlin_noise(timer, new_range=[0, 1]), near_perlin[1].generate_1D_perlin_noise(timer, new_range=[0, 1]), near_perlin[2].generate_1D_perlin_noise(timer, new_range=[0, 1]))
+    prog['far_color'].value = (far_perlin[0].generate_1D_perlin_noise(timer, new_range=[0, 1]), far_perlin[1].generate_1D_perlin_noise(timer, new_range=[0, 1]), far_perlin[2].generate_1D_perlin_noise(timer, new_range=[0, 1]))
+    model = Matrix44.from_x_rotation(math.sin(angle)) @ Matrix44.from_z_rotation(math.cos(angle))
+    prog['model'].write(model.astype('f4'))
 
-    pygame.quit()
+    ctx.clear(0.0, 0.0, 0.0, 1.0, depth=1.0)
+    vao.render(moderngl.TRIANGLES)
+    glfw.swap_buffers(window)
+    time.sleep(1 / 60)
 
-if __name__ == "__main__":
-    main()
+glfw.terminate()
