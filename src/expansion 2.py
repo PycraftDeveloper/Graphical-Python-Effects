@@ -1,8 +1,9 @@
 import pmma
 import time
 import pygame
+import traceback
 
-pmma.init()
+pmma.init(log_information=True)
 
 noise = pmma.Perlin()
 r_noise = pmma.Perlin()
@@ -10,11 +11,11 @@ g_noise = pmma.Perlin()
 b_noise = pmma.Perlin()
 
 display = pmma.Display()
-display.create(1920, 1080, fullscreen=True)
+display.create(fullscreen=False, resizable=True)
 
 events = pmma.Events()
 
-draw = pmma.Draw(canvas=display)
+draw = pmma.Draw()
 
 backpack = pmma.Backpack
 
@@ -38,7 +39,8 @@ render_pipeline = []
 start = time.perf_counter()
 now_time = 0
 while backpack.running:
-    display.clear(pygame.transform.average_color(display.surface))
+    #print(display.get_fps())
+    display.clear(pygame.transform.average_color(display.pygame_surface.pygame_surface))
     events.handle()
 
     col = [r_noise.generate_1D_perlin_noise(now_time/7, new_range=[0, 255]),
@@ -53,5 +55,8 @@ while backpack.running:
         if element.radius > display.get_width():
             render_pipeline.remove(element)
 
-    display.refresh(refresh_rate=7)
+    pmma.compute()
+    display.refresh(refresh_rate=75) # 7
     now_time = (time.perf_counter() - start)/scale
+
+pmma.quit()

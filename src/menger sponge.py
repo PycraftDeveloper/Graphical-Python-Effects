@@ -56,8 +56,9 @@ if not glfw.init():
     raise Exception("GLFW can not be initialized!")
 
 # Create a window
-monitor = glfw.get_primary_monitor()
-window = glfw.create_window(1920, 1080, "Menger Sponge", monitor, None)
+#monitor = glfw.get_primary_monitor()
+#window = glfw.create_window(1920, 1080, "Menger Sponge", monitor, None)
+window = glfw.create_window(1280, 720, "Menger Sponge", None, None)
 if not window:
     glfw.terminate()
     raise Exception("GLFW window can not be created!")
@@ -145,7 +146,7 @@ def update_buffer(vertices, normals):
         (nbo, '3f', 'in_normal')
     ])
 
-iterations = 5
+iterations = 4
 vertices, normals = generate_menger_sponge(iterations)
 update_buffer(vertices, normals)
 
