@@ -11,15 +11,10 @@ pmma.init()
 
 noise = pmma.Perlin()
 
-# Initialize Pygame
-pygame.init()
-info = pygame.display.Info()
-width, height = info.current_w, info.current_h
-screen = pygame.display.set_mode((width, height), DOUBLEBUF | OPENGL | pygame.NOFRAME, vsync=True)
-pygame.display.set_caption('3D Grid of Variable-Height Cuboids')
+display = pmma.Display()
+display.create()
 
-# Create ModernGL context
-ctx = moderngl.create_context()
+events = pmma.Events()
 
 # Vertex Shader with instancing
 vertex_shader = '''
@@ -54,7 +49,7 @@ void main() {
 '''
 
 # Compile shaders and create program
-program = ctx.program(
+program = pmma.Registry.context.program(
     vertex_shader=vertex_shader,
     fragment_shader=fragment_shader
 )
@@ -81,8 +76,8 @@ indices = np.array([
 ], dtype='i4')
 
 # Create Vertex Buffer Object and Element Buffer Object
-vbo = ctx.buffer(vertices.tobytes())
-ebo = ctx.buffer(indices.tobytes())
+vbo = pmma.Registry.context.buffer(vertices.tobytes())
+ebo = pmma.Registry.context.buffer(indices.tobytes())
 
 # Create instance data for offsets, heights, and colors
 def create_instance_data(n):
@@ -98,11 +93,11 @@ n = 100  # Adjust grid size for testing
 offsets, colors = create_instance_data(n)
 
 # Create buffers for instance data
-offset_buffer = ctx.buffer(offsets.tobytes())
-color_buffer = ctx.buffer(colors.tobytes())
+offset_buffer = pmma.Registry.context.buffer(offsets.tobytes())
+color_buffer = pmma.Registry.context.buffer(colors.tobytes())
 
 # Create Vertex Array Object with instancing
-vao = ctx.vertex_array(
+vao = pmma.Registry.context.vertex_array(
     program,
     [
         (vbo, '3f', 'in_vert'),
@@ -118,7 +113,7 @@ view = Matrix44.look_at(
     target=Vector3([0, 0, 0]),
     up=Vector3([0, 1, 0])
 )
-proj = Matrix44.perspective_projection(90, width / height, 0.1, 1000.0)
+proj = Matrix44.perspective_projection(90, display.get_width() / display.get_height(), 0.1, 1000.0)
 view_proj = proj * view
 
 # Uniform locations
@@ -132,15 +127,13 @@ angle = 0.0
 
 start = time.perf_counter()
 now_time = 0
-while running:
+while pmma.Registry.running:
     # Event handling
-    for event in pygame.event.get():
-        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-            running = False
+    events.handle()
 
     # Clear the screen
-    ctx.clear(0.0, 0.0, 0.0, 1.0)
-    ctx.enable(moderngl.DEPTH_TEST | moderngl.BLEND)
+    display.clear()
+    pmma.Registry.context.enable(moderngl.DEPTH_TEST | moderngl.BLEND)
 
     # Rotate the camera around the grid
     angle += 0.01
@@ -158,16 +151,16 @@ while running:
     # Update cube heights dynamically
     #i = 0
     #print(noise.generate_2D_perlin_noise((i%n)+now_time, (i//n)+now_time, range=[0, 4]))
-    new_heights = np.array([[offset[0], noise.generate_2D_perlin_noise(((i%n)/30)+now_time, ((i//n)/30)+now_time, range=[0, 4.32])**2, offset[2]]  for i, offset in enumerate(offsets)], dtype='f4')
+    new_heights = np.array([[offset[0], noise.generate_2D_perlin_noise(((i%n)/30)+now_time, ((i//n)/30)+now_time, new_range=[0, 4.32])**2, offset[2]]  for i, offset in enumerate(offsets)], dtype='f4')
     offset_buffer.write(new_heights.tobytes())
 
     # Render all cuboids with a single draw call
+    display.get_3D_hardware_accelerated_surface()
     vao.render(moderngl.TRIANGLES, instances=len(offsets))
 
-    # Swap buffers
-    pygame.display.flip()
-    clock.tick(60)
+    display.refresh()
     now_time = (time.perf_counter()-start)/10
 
 # Cleanup
+pmma.quit()
 pygame.quit()
