@@ -32,8 +32,9 @@ The following Python programs HAVE been turned into YouTube videos:
 * `cubes 2.py` in: [[1 hour version] Spinning Sea of Cubes](https://youtu.be/KeQ9h-Ip0z4)
 * `2d expansion.py` in: [[1 hour version] Rainbow Expansion](https://youtu.be/lJPgY2dbE6Y)
 * `menger sponge.py` in: [[3 hour version] Hypnotic Rainbow Menger Sponge](https://youtu.be/_yWIl0H0CBE)
-* `triangular implosion.py` in: To be released!
+* `triangular implosion.py` in: [[1 hour version] Infinity Mirror with Rainbow](https://youtu.be/9tiIm1luyV4)
 * `square implosion.py` in: To be released!
+* `lights.py` in: To be released!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
@@ -64,3 +65,4 @@ The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `nth gradient.py`
 * `planar.py`
 * `waves.py`
+* `circuits.py`
