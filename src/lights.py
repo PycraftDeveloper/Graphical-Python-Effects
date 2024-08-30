@@ -4,7 +4,7 @@ import time
 import math
 import pygame
 
-pmma.init()
+pmma.init(log_information=True)
 
 display = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
@@ -32,7 +32,7 @@ class Point:
     def render(self, color):
         self.compute()
 
-        pygame.draw.circle(Surface, color, (self.x, self.y), 10, 3)
+        pygame.draw.circle(Surface, color, (self.x, self.y), 10)
 
 point = Point()
 
