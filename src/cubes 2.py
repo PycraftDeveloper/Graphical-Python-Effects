@@ -30,7 +30,7 @@ void main() {
     if (length(vec2(in_offset.x, in_offset.z)) > 50) {
         v_color = vec4(0, 0, 0, 0);
     } else {
-        v_color = vec4(in_color*(0.2+(in_offset.y/15)), 0.5);
+        v_color = vec4(in_color*(0.2+(in_offset.y/15)), 0.5)*2;
     }
 }
 '''
@@ -132,7 +132,7 @@ while pmma.Registry.running:
     events.handle()
 
     # Clear the screen
-    display.clear()
+    display.clear(0, 0, 0)
     pmma.Registry.context.enable(moderngl.DEPTH_TEST | moderngl.BLEND)
 
     # Rotate the camera around the grid
@@ -158,9 +158,15 @@ while pmma.Registry.running:
     display.get_3D_hardware_accelerated_surface()
     vao.render(moderngl.TRIANGLES, instances=len(offsets))
 
+    pmma.compute()
+
     display.refresh()
     now_time = (time.perf_counter()-start)/10
 
 # Cleanup
-pmma.quit()
+import traceback
+try:
+    pmma.quit()
+except Exception as error:
+    print(traceback.format_exc())
 pygame.quit()
