@@ -77,16 +77,16 @@ class Point:
 
     def update_position(self):
         position = [
-            self.x_noise.generate_1D_perlin_noise(now_time/5, new_range=[-2*aspect_ratio, 2*aspect_ratio]),
+            self.x_noise.generate_1D_perlin_noise(now_time/25, new_range=[-0.001, 0.001]),
             3,#self.y_noise.generate_1D_perlin_noise(now_time/100, new_range=[5, 20]),
-            self.z_noise.generate_1D_perlin_noise(-now_time/5, new_range=[-2, 2])
+            self.z_noise.generate_1D_perlin_noise(-now_time/25, new_range=[-0.001, 0.001])
         ]
         _position = [position[0], position[2]]
-        self.position = np.array(_position, dtype='f4')
+        self.position = np.array([self.position[0]+_position[0], self.position[1]+_position[1]], dtype='f4')
         self.point_size = np.array([position[1]], dtype='f4')
 
 # Generate random points
-num_points = 100#00
+num_points = 1000#0
 points = [
     Point(
         position=np.random.uniform(-5, 5, 3),
