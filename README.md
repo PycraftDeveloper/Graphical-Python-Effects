@@ -35,6 +35,7 @@ The following Python programs HAVE been turned into YouTube videos:
 * `triangular implosion.py` in: [[1 hour version] Infinity Mirror with Rainbow](https://youtu.be/9tiIm1luyV4)
 * `square implosion.py` in: To be released!
 * `lights.py` in: [[1 hour version] Rainbow tie](https://youtu.be/EKUEIihICE4)
+* `space.py` in: To be released!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
