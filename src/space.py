@@ -5,6 +5,8 @@ import random
 
 import pmma
 
+#pmma.set_display_mode(pmma.Constants.PYGAME)
+
 try:
     pmma.init()
 except Exception as e:
@@ -72,6 +74,7 @@ for i in range(N):
 start = time.perf_counter()
 now_time = 0
 color = [255, 255, 255]
+time.sleep(5)
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -94,3 +97,4 @@ while True:
         #print("SLOW", clock.get_fps())
     clock.tick(60)
     now_time = time.perf_counter() - start
+    pmma.Registry.in_game_loop = True
