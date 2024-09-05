@@ -35,13 +35,13 @@ class Point:
 
     def render(self, color):
         if self.escaped is False:
-            if self.orbit >= 50:
-                self.orbit += random.random()
-            elif self.orbit < 50:
-                self.orbit += 3
-                self.width = (3 / 50) * self.orbit
-
             if self.orbit >= 75:
+                self.orbit += random.random()
+            elif self.orbit < 75:
+                self.orbit += 3
+                self.width = (3 / 75) * self.orbit
+
+            if self.orbit >= 100:
                 self.escaped = True
         else:
             self.orbit += 7
@@ -90,5 +90,7 @@ while True:
         point.render(color)
 
     pygame.display.flip()
-    clock.tick(75)
+    #if clock.get_fps() < 60:
+        #print("SLOW", clock.get_fps())
+    clock.tick(60)
     now_time = time.perf_counter() - start
