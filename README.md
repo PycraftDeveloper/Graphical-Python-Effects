@@ -34,7 +34,7 @@ The following Python programs HAVE been turned into YouTube videos:
 * `menger sponge.py` in: [[3 hour version] Hypnotic Rainbow Menger Sponge](https://youtu.be/_yWIl0H0CBE)
 * `triangular implosion.py` in: [[1 hour version] Infinity Mirror with Rainbow](https://youtu.be/9tiIm1luyV4)
 * `square implosion.py` in: To be released!
-* `lights.py` in: To be released!
+* `lights.py` in: [[1 hour version] Rainbow tie](https://youtu.be/EKUEIihICE4)
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
