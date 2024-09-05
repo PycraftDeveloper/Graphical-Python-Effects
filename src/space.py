@@ -74,7 +74,6 @@ for i in range(N):
 start = time.perf_counter()
 now_time = 0
 color = [255, 255, 255]
-time.sleep(5)
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
