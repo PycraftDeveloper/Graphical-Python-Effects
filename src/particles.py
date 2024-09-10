@@ -5,13 +5,13 @@ try:
     import math
     from traceback import format_exception
 
-    pmma.init()
+    pmma.init(targeted_profile_application=True)
 
     canvas = pmma.Display()
-    canvas.create()
+    canvas.create(1280, 720, full_screen=False, resizable=True)
     events = pmma.Events()
 
-    N = 100
+    N = 1000
 
     s = int((canvas.get_width()**2 + canvas.get_height()**2)**0.5)
 
@@ -21,6 +21,10 @@ try:
             self.o = random.randint(500, s)
             self.pixel = pmma.Pixel()
 
+        def __del__(self):
+            self.pixel.quit()
+
+        @pmma.profile_this
         def render(self, now_time, col):
             x = (canvas.get_width() - (math.sin(now_time+self.n) * self.o))/2
             y = (canvas.get_height() - (math.cos(now_time+self.n) * self.o))/2
@@ -51,6 +55,7 @@ try:
 
         pmma.compute()
         canvas.refresh()
+
         now_time = (time.perf_counter() - start)/100
     pmma.quit()
 except Exception as error:
