@@ -5,7 +5,7 @@ try:
     import math
     from traceback import format_exception
 
-    pmma.init(targeted_profile_application=True)
+    pmma.init()
 
     canvas = pmma.Display()
     canvas.create(1280, 720, full_screen=False, resizable=True)
@@ -24,7 +24,6 @@ try:
         def __del__(self):
             self.pixel.quit()
 
-        @pmma.profile_this
         def render(self, now_time, col):
             x = (canvas.get_width() - (math.sin(now_time+self.n) * self.o))/2
             y = (canvas.get_height() - (math.cos(now_time+self.n) * self.o))/2
