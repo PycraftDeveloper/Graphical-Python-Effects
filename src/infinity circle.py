@@ -45,13 +45,17 @@ running = True
 clock = pygame.time.Clock()
 start = time.perf_counter()
 now_time = 0
+surface = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+surface.set_alpha(253)
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
     # Clear the screen
+    surface.blit(screen, (0, 0))
     screen.fill([0, 0, 0])
+    screen.blit(surface, (0, 0))
 
     # Calculate the center of the screen
     center = (screen.get_width() // 2, screen.get_height() // 2)
@@ -66,7 +70,7 @@ while running:
         w_noise.generate_1D_perlin_noise(now_time/20, new_range=[100, screen.get_height()]),
         h_noise.generate_1D_perlin_noise(now_time/20, new_range=[100, screen.get_height()]),
         angle,
-        color.generate_color(now_time))
+        color.generate_color(now_time/25))
 
     # Update the display
     pygame.display.flip()

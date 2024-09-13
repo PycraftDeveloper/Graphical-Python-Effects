@@ -1,11 +1,14 @@
 try:
+    from traceback import format_exception
     import random
     import time
     import pmma
     import math
-    from traceback import format_exception
 
-    pmma.init()
+    pmma.init(general_profile_application=True)
+
+    pmma.set_allow_anti_aliasing(False)
+    pmma.set_anti_aliasing_level(8)
 
     canvas = pmma.Display()
     canvas.create(1280, 720, full_screen=False, resizable=True)
@@ -20,15 +23,17 @@ try:
             self.n = n
             self.o = random.randint(500, s)
             self.pixel = pmma.Pixel()
+            self.pixel.set_color([255, 255, 255])
+            self.color = pmma.ColorConverter()
 
         def __del__(self):
             self.pixel.quit()
 
-        def render(self, now_time, col):
+        def render(self, now_time):
             x = (canvas.get_width() - (math.sin(now_time+self.n) * self.o))/2
             y = (canvas.get_height() - (math.cos(now_time+self.n) * self.o))/2
 
-            self.pixel.set_color(col)
+            #self.pixel.set_color(self.color.generate_color(now_time/2))
             self.pixel.set_position([x, y])
 
             self.pixel.render()
@@ -38,24 +43,25 @@ try:
     for i in range(N):
         particles.append(Particle(i))
 
-    color = pmma.ColorConverter()
+    col = pmma.ColorConverter()
 
     start = time.perf_counter()
     now_time = 0
+    #pmma.targeted_profile_start()
     while pmma.get_application_running():
-        canvas.clear([0, 0, 0])
+        canvas.clear()
 
         events.handle()
 
-        col = color.generate_color(now_time/100)
-
         for particle in particles:
-            particle.render(now_time, col)
+            particle.render(now_time)
 
         pmma.compute()
-        canvas.refresh()
+        canvas.refresh(refresh_rate=2000)
 
-        now_time = (time.perf_counter() - start)/100
+        now_time = (time.perf_counter() - start)/5
+
+    #pmma.targeted_profile_end()
     pmma.quit()
 except Exception as error:
     print("".join(
