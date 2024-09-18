@@ -33,7 +33,7 @@ The following Python programs HAVE been turned into YouTube videos:
 * `2d expansion.py` in: [[1 hour version] Rainbow Expansion](https://youtu.be/lJPgY2dbE6Y)
 * `menger sponge.py` in: [[3 hour version] Hypnotic Rainbow Menger Sponge](https://youtu.be/_yWIl0H0CBE)
 * `triangular implosion.py` in: [[1 hour version] Infinity Mirror with Rainbow](https://youtu.be/9tiIm1luyV4)
-* `square implosion.py` in: To be released!
+* `square implosion.py` in: [[1 hour version] Portal to a Colorful Infinity](https://youtu.be/1QOa7VMBCx0)
 * `lights.py` in: [[1 hour version] Rainbow tie](https://youtu.be/EKUEIihICE4)
 * `space.py` in: [[3 hour version] Rainbow Spinning Space Particles](https://youtu.be/3NcM1yEs2ks)
 * `infinity circle.py` in: To be released!
