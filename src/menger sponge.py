@@ -6,50 +6,7 @@ import time
 import math
 import pmma
 
-def generate_menger_sponge(iterations):
-    def recurse(level, x, y, z, size, vertices, vertex_normals):
-        if level == 0:
-            half = size / 2
-            offsets = np.array([
-                [x - half, y - half, z - half],
-                [x + half, y - half, z - half],
-                [x + half, y + half, z - half],
-                [x - half, y + half, z - half],
-                [x - half, y - half, z + half],
-                [x + half, y - half, z + half],
-                [x + half, y + half, z + half],
-                [x - half, y + half, z + half]
-            ])
-            faces = np.array([
-                [0, 1, 2], [2, 3, 0], # Front face
-                [4, 5, 6], [6, 7, 4], # Back face
-                [0, 1, 5], [5, 4, 0], # Bottom face
-                [2, 3, 7], [7, 6, 2], # Top face
-                [1, 2, 6], [6, 5, 1], # Right face
-                [0, 3, 7], [7, 4, 0]  # Left face
-            ])
-            face_normals = np.array([
-                [0, 0, -1], [0, 0, -1],
-                [0, 0, 1], [0, 0, 1],
-                [0, -1, 0], [0, -1, 0],
-                [0, 1, 0], [0, 1, 0],
-                [1, 0, 0], [1, 0, 0],
-                [-1, 0, 0], [-1, 0, 0]
-            ])
-            vertices.extend(offsets[faces].reshape(-1, 3))
-            vertex_normals.extend(np.repeat(face_normals, 3, axis=0))
-        else:
-            new_size = size / 3
-            for dx in (-1, 0, 1):
-                for dy in (-1, 0, 1):
-                    for dz in (-1, 0, 1):
-                        if (dx, dy, dz).count(0) < 2:
-                            recurse(level - 1, x + dx * new_size, y + dy * new_size, z + dz * new_size, new_size, vertices, vertex_normals)
-
-    vertices = []
-    vertex_normals = []
-    recurse(iterations, 0, 0, 0, 1, vertices, vertex_normals)
-    return np.array(vertices, dtype='f4'), np.array(vertex_normals, dtype='f4')
+import menger_sponge
 
 # Initialize GLFW
 if not glfw.init():
@@ -63,8 +20,8 @@ if not window:
     glfw.terminate()
     raise Exception("GLFW window can not be created!")
 
-near_perlin = [pmma.Perlin(), pmma.Perlin(), pmma.Perlin()]
-far_perlin = [pmma.Perlin(), pmma.Perlin(), pmma.Perlin()]
+near_color = pmma.ColorConverter()
+far_color = pmma.ColorConverter()
 
 glfw.make_context_current(window)
 ctx = moderngl.create_context()
@@ -89,7 +46,7 @@ fragment_shader_source = """
 #version 330
 in vec3 frag_normal;
 in vec3 frag_position;
-out vec4 FragColor;
+out vec3 FragColor;
 uniform vec3 near_color;
 uniform vec3 far_color;
 
@@ -97,10 +54,7 @@ void main() {
     float distance = length(frag_position);
     float t = distance;  // Adjust the divisor for the distance range
     t = clamp(t, 0.0, 1.0);
-    vec3 color = mix(near_color, far_color, t);
-
-    vec3 result = color;
-    FragColor = vec4(result, 1.0);
+    FragColor = mix(near_color*1.5, far_color/1.5, t);
 }
 """
 
@@ -109,14 +63,24 @@ prog = ctx.program(
     fragment_shader=fragment_shader_source,
 )
 
-iterations = 1
-vertices, normals = generate_menger_sponge(iterations)
-vbo = ctx.buffer(vertices.tobytes())
-nbo = ctx.buffer(normals.tobytes())
+iterations = 5
+vertices, normals = menger_sponge.generate_menger_sponge(iterations)
+# Convert memoryviews to NumPy arrays
+vertices_np = np.array(vertices)
+normals_np = np.array(normals)
+
+# Convert NumPy arrays to bytes
+vertices_bytes = vertices_np.tobytes()
+normals_bytes = normals_np.tobytes()
+
+# Create the VBO using ModernGL
+vbo = ctx.buffer(vertices_bytes)
+# Create the IBO (if needed)
+ibo = ctx.buffer(normals_bytes)
 
 vao = ctx.vertex_array(prog, [
     (vbo, '3f', 'in_position'),
-    (nbo, '3f', 'in_normal')
+    (ibo, '3f', 'in_normal')
 ])
 
 view = Matrix44.look_at(
@@ -130,38 +94,19 @@ prog['view'].write(view.astype('f4'))
 prog['projection'].write(projection.astype('f4'))
 
 # Set near and far colors
-near_color = (0.0, 0.0, 1.0)  # Blue
-far_color = (1.0, 0.0, 0.0)   # Red
-prog['near_color'].value = near_color
-prog['far_color'].value = far_color
-
-def update_buffer(vertices, normals):
-    global vbo, nbo, vao
-    vbo.release()
-    nbo.release()
-    vbo = ctx.buffer(vertices.tobytes())
-    nbo = ctx.buffer(normals.tobytes())
-    vao = ctx.vertex_array(prog, [
-        (vbo, '3f', 'in_position'),
-        (nbo, '3f', 'in_normal')
-    ])
-
-iterations = 4
-vertices, normals = generate_menger_sponge(iterations)
-update_buffer(vertices, normals)
+prog['near_color'].value = near_color.generate_color(0, format=pmma.Constants.SMALL_RGB)
+prog['far_color'].value = far_color.generate_color(0, format=pmma.Constants.SMALL_RGB)
 
 ctx.enable(moderngl.DEPTH_TEST)  # Enable depth testing
 ctx.front_face = 'ccw'
-ctx.enable(moderngl.CULL_FACE)  # Enable face culling
-ctx.cull_face = 'back'  # Cull back faces
 
 while not glfw.window_should_close(window):
     glfw.poll_events()
 
     angle = glfw.get_time() / 2
     timer = angle/10
-    prog['near_color'].value = (near_perlin[0].generate_1D_perlin_noise(timer, new_range=[0, 1]), near_perlin[1].generate_1D_perlin_noise(timer, new_range=[0, 1]), near_perlin[2].generate_1D_perlin_noise(timer, new_range=[0, 1]))
-    prog['far_color'].value = (far_perlin[0].generate_1D_perlin_noise(timer, new_range=[0, 1]), far_perlin[1].generate_1D_perlin_noise(timer, new_range=[0, 1]), far_perlin[2].generate_1D_perlin_noise(timer, new_range=[0, 1]))
+    prog['near_color'].value = near_color.generate_color(timer, format=pmma.Constants.SMALL_RGB)
+    prog['far_color'].value = far_color.generate_color(timer, format=pmma.Constants.SMALL_RGB)
     model = Matrix44.from_x_rotation(math.sin(angle)) @ Matrix44.from_z_rotation(math.cos(angle))
     prog['model'].write(model.astype('f4'))
 
