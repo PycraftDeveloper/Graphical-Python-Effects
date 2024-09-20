@@ -38,6 +38,7 @@ The following Python programs HAVE been turned into YouTube videos:
 * `space.py` in: [[3 hour version] Rainbow Spinning Space Particles](https://youtu.be/3NcM1yEs2ks)
 * `infinity circle.py` in: To be released!
 * `colored glass panes.py` in: To be released!
+* `lines.py` in: To be released!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`

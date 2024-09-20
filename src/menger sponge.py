@@ -13,9 +13,8 @@ if not glfw.init():
     raise Exception("GLFW can not be initialized!")
 
 # Create a window
-#monitor = glfw.get_primary_monitor()
-#window = glfw.create_window(1920, 1080, "Menger Sponge", monitor, None)
-window = glfw.create_window(1280, 720, "Menger Sponge", None, None)
+monitor = glfw.get_primary_monitor()
+window = glfw.create_window(1920, 1080, "Menger Sponge", monitor, None)
 if not window:
     glfw.terminate()
     raise Exception("GLFW window can not be created!")
@@ -63,7 +62,7 @@ prog = ctx.program(
     fragment_shader=fragment_shader_source,
 )
 
-iterations = 5
+iterations = 4
 vertices, normals = menger_sponge.generate_menger_sponge(iterations)
 # Convert memoryviews to NumPy arrays
 vertices_np = np.array(vertices)
