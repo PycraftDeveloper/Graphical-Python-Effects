@@ -1,122 +1,119 @@
 import pygame
+import pmma
 import random
+import time
 
-# Initialize Pygame
 pygame.init()
+pmma.init()
 
-# Constants
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SQUARE_SIZE = 7
-SPACING = 3
-TOTAL_SQUARES = (SCREEN_WIDTH) // (SQUARE_SIZE + SPACING)
-FPS = 60
-MOVE_DURATION = 3000  # Time in milliseconds for each movement
-MAX_Y_VARIATION = 50  # Maximum random Y-axis gain/loss
-
-# Colors
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-
-# Square class
-class Square:
-    def __init__(self, x, y, color):
-        self.initial_pos = (x, y)
-        self.x = x
-        self.y = y
-        self.target_x = x
-        self.target_y = y
-        self.color = color
-        self.start_time = pygame.time.get_ticks()
-        self.move_duration = MOVE_DURATION
-
-        # Intermediate Y target and velocity for vertical movement
-        self.intermediate_y = y
-        self.velocity_x = 0
-        self.velocity_y = 0
-
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, pygame.Rect(self.x, self.y, SQUARE_SIZE, SQUARE_SIZE))
-
-    def move(self):
-        current_time = pygame.time.get_ticks()
-        elapsed_time = current_time - self.start_time
-        if elapsed_time >= self.move_duration:
-            self.x = self.target_x
-            self.y = self.target_y
-        else:
-            # Progress ratio (from 0 to 1)
-            progress = elapsed_time / self.move_duration
-
-            # Calculate non-linear motion based on progress
-            self.x = self.lerp(self.x, self.target_x, progress)
-            self.y = self.vertical_movement(progress)
-
-    def set_new_target(self, new_x, new_y):
-        self.target_x = new_x
-        self.target_y = SCREEN_HEIGHT // 2 - SQUARE_SIZE // 2  # Ensure target is always on the center line
-        self.start_time = pygame.time.get_ticks()
-
-        # Set intermediate Y for random variation
-        self.intermediate_y = self.y + random.randint(-MAX_Y_VARIATION, MAX_Y_VARIATION)
-
-        # Set velocities based on random speed factor for vertical movements
-        self.velocity_x = (self.target_x - self.x) / self.move_duration
-        self.velocity_y = (self.intermediate_y - self.y) / (self.move_duration / 2)  # Faster to Y-offset
-
-    def lerp(self, start, end, progress):
-        return start + (end - start) * progress
-
-    def vertical_movement(self, progress):
-        # First half: Move towards random Y offset, then return to center line
-        if progress < 0.5:
-            return self.lerp(self.y, self.intermediate_y, progress * 2)
-        else:
-            return self.lerp(self.intermediate_y, self.target_y, (progress - 0.5) * 2)
-
-# Create screen
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Square Movement with Dynamic Vertical Motion")
-
-# Create squares
-squares = []
-for i in range(TOTAL_SQUARES):
-    x = i * (SQUARE_SIZE + SPACING)
-    y = SCREEN_HEIGHT // 2 - SQUARE_SIZE // 2
-    square = Square(x, y, RED)
-    squares.append(square)
-
-# Main loop
-running = True
+display = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN)
 clock = pygame.time.Clock()
-last_swap_time = pygame.time.get_ticks()
 
-while running:
-    screen.fill(WHITE)
+SQUARE_SIZE = 20
+SQUARE_SPACER = 5
+SQUARE_COUNT = display.get_height() // (SQUARE_SIZE + SQUARE_SPACER)
+SQUARE_X_CENTER = (display.get_width() - SQUARE_SIZE) // 2
+SQUARE_Y_OFFSET = (display.get_height() % (SQUARE_SIZE + SQUARE_SPACER))/2
+ANIMATION_DURATION = 3
 
-    # Event handling
+def apply_color_offset(value, offset):
+    red = value[0] + offset[0]
+    green = value[1] + offset[1]
+    blue = value[2] + offset[2]
+    if red > 255: red = 255
+    if green > 255: green = 255
+    if blue > 255: blue = 255
+    if red < 0: red = 0
+    if green < 0: green = 0
+    if blue < 0: blue = 0
+    return red, green, blue
+
+class Square:
+    def __init__(self, y_value):
+        self.y_value = y_value * (SQUARE_SIZE + SQUARE_SPACER)
+        self.color = pmma.ColorConverter()
+        self.difference = [random.randint(-20, 20), random.randint(-20, 20), random.randint(-20, 20)]
+        self.path = []
+        v = random.randint(0, 1)
+        print()
+        if v == 0:
+            self.x_displacement = random.randint(-(display.get_width()-(SQUARE_X_CENTER+SQUARE_SIZE*2)), int(SQUARE_SIZE*1.1))
+        else:
+            self.x_displacement = random.randint(int(SQUARE_SIZE*1.1), (display.get_width()-(SQUARE_X_CENTER+SQUARE_SIZE*2)))
+        self.generate_path(y_value)
+
+    def generate_path(self, index):
+        self.path = [[SQUARE_X_CENTER, self.y_value]]
+        new_y_value = index * (SQUARE_SIZE + SQUARE_SPACER)
+        y_distance = new_y_value - self.y_value
+        x_distance = self.x_displacement
+
+        split = int((60 * ANIMATION_DURATION-1)/3)
+
+        x_delta = x_distance / split
+        for i in range(split):
+            self.path.append([self.path[-1][0] + x_delta, self.path[-1][1]])
+
+        y_delta = y_distance / split
+        for i in range(split):
+            self.path.append([self.path[-1][0], self.path[-1][1] + y_delta])
+
+        for i in range(split):
+            self.path.append([self.path[-1][0] - x_delta, self.path[-1][1]])
+
+        for x in range(((ANIMATION_DURATION * 60) - len(self.path))+1):
+            self.path.append([*self.path[-1]])
+
+        self.y_value = new_y_value
+        v = random.randint(0, 1)
+        if v == 0:
+            self.x_displacement = random.randint(-(display.get_width()-(SQUARE_X_CENTER+SQUARE_SIZE*2)), int(SQUARE_SIZE*1.1))
+        else:
+            self.x_displacement = random.randint(int(SQUARE_SIZE*1.1), (display.get_width()-(SQUARE_X_CENTER+SQUARE_SIZE*2)))
+
+    def render(self, timer, frame_index):
+        x, y = self.path[frame_index]
+        #print(x, y)
+        color = self.color.generate_color(timer/25)
+        pygame.draw.rect(display, color, [x, y+SQUARE_Y_OFFSET, SQUARE_SIZE, SQUARE_SIZE])
+        pygame.draw.rect(display, apply_color_offset(color, self.difference), [x, y+SQUARE_Y_OFFSET, SQUARE_SIZE, SQUARE_SIZE], width=3)
+
+square_indexes = []
+squares_array = []
+for i in range(SQUARE_COUNT):
+    squares_array.append(Square(i))
+    square_indexes.append(i)
+
+start = time.perf_counter()
+now_time = 0
+frame_index = 0
+surface = pygame.Surface(display.get_size())
+surface.fill([255, 255, 255])
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            pygame.quit()
+            exit()
 
-    # Time-based target swapping
-    current_time = pygame.time.get_ticks()
-    if current_time - last_swap_time > MOVE_DURATION:
-        # Swap target positions randomly
-        positions = [(square.x, square.y) for square in squares]
-        random.shuffle(positions)
-        for i, square in enumerate(squares):
-            new_x, new_y = positions[i]
-            square.set_new_target(new_x, new_y)
-        last_swap_time = current_time
+    if frame_index > ANIMATION_DURATION * 60:
+        frame_index = 0
+        random.shuffle(square_indexes)
+        frame_index = 0
+        i = 0
+        for square in squares_array:
+            square.generate_path(square_indexes[i])
+            i += 1
 
-    # Move squares and draw them
-    for square in squares:
-        square.move()
-        square.draw(screen)
+    surface.blit(display, (0, 0))
+    display.fill([255, 255, 255])
+    surface.set_alpha(220) # 200
+    display.blit(surface, (0, 0))
+
+    for square in squares_array:
+        square.render(now_time, frame_index)
 
     pygame.display.flip()
-    clock.tick(FPS)
 
-# Quit Pygame
-pygame.quit()
+    clock.tick(60)
+    frame_index += 1
+    now_time = time.perf_counter() - start

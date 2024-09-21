@@ -39,6 +39,7 @@ The following Python programs HAVE been turned into YouTube videos:
 * `infinity circle.py` in: To be released!
 * `colored glass panes.py` in: To be released!
 * `lines.py` in: To be released!
+* `square migration.py` in: To be released!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
