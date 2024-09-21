@@ -12,14 +12,27 @@ class Line:
     def __init__(self, y_pos):
         self._noise = pmma.Perlin(seed=0)
         self._y_pos = y_pos
+        self._points = []
 
     def render(self, col):
+        C = 750
+        filled = False
         points = []
-        sf = 1920 / 600
-        for x in range(600):
-            points.append([x*sf, self._y_pos + self._noise.generate_2D_perlin_noise(now_time + (x*sf)/1000, self._y_pos/200, new_range=[-80, 80])])
+        self._points.append(self._y_pos + self._noise.generate_2D_perlin_noise(now_time/5, self._y_pos/200, new_range=[-80, 80]))
+        lx = 0
+        for x in range(len(self._points)):
+            points.append([lx, self._points[x]])
+            lx = (1920 / len(self._points))*x
 
-        pygame.draw.lines(display, col, False, points, 3)
+        if len(self._points) > C:
+            del self._points[0]
+            filled = True
+
+        try:
+            pygame.draw.lines(display, col, False, points, 3)
+        except:
+            pass
+        return filled
 
 N = 50
 y_pos = 0
@@ -42,9 +55,11 @@ while True:
     display.fill((0, 0, 0))
 
     for line in lines:
-        line.render(col)
+        f = line.render(col)
 
     pygame.display.update()
-    clock.tick(60)
-    print(clock.get_fps())
+    if f:
+        clock.tick(60)
+    else:
+        clock.tick(2000)
     now_time = time.perf_counter() - start
