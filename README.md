@@ -36,7 +36,7 @@ The following Python programs HAVE been turned into YouTube videos:
 * `square implosion.py` in: [[1 hour version] Portal to a Colorful Infinity](https://youtu.be/1QOa7VMBCx0)
 * `lights.py` in: [[1 hour version] Rainbow tie](https://youtu.be/EKUEIihICE4)
 * `space.py` in: [[3 hour version] Rainbow Spinning Space Particles](https://youtu.be/3NcM1yEs2ks)
-* `infinity circle.py` in: To be released!
+* `infinity circle.py` in: [[2 hour version] Spinning Rainbow Circles](https://youtu.be/-QRdwDcxiGE)
 * `colored glass panes.py` in: To be released!
 * `lines.py` in: To be released!
 * `square migration.py` in: To be released!
