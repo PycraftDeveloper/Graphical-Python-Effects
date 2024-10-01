@@ -23,7 +23,7 @@ The following Python programs HAVE been turned into YouTube videos:
 * `radial breeze.py` in: [[1 hour version] Radial Gradient](https://youtu.be/iDCFAEVO4Bs)
 * `snake ascension.py` in: [[1 hour version] Snake Ascension](https://youtu.be/DDWx2GfMw1c)
 * `snake expansion.py` in: [[1 hour version] 4K Expansion](https://youtu.be/1dpQ6pDfpAc)
-* `colored light.py` in: [[1 hour version] 4K Coloured Orbs of Light](https://youtu.be/RXvL6IMpEOQ) and Scheduled!
+* `colored light.py` in: [[1 hour version] 4K Coloured Orbs of Light](https://youtu.be/RXvL6IMpEOQ) and [[5 hour version] Coloured Orbs of Light (Super Slow version)](https://youtu.be/CwRS3GrlJmY)
 * `squares.py` in: [[1 hour version] 4K Square Inception](https://youtu.be/hKbF_Vszz3M)
 * `hexagonal.py` in: [[1 hour version] Cascading Scales](https://youtu.be/OYRjXmrKs6s)
 * `linear 2 with fade.py` in: [[1 hour version] Aurora](https://youtu.be/7t_teUYG0QU)
@@ -31,7 +31,7 @@ The following Python programs HAVE been turned into YouTube videos:
 * `expansion 2.py` in: [[1 hour version] Vertical Paint Expansion](https://youtu.be/9tg38xxOypE)
 * `cubes 2.py` in: [[1 hour version] Spinning Sea of Cubes](https://youtu.be/KeQ9h-Ip0z4)
 * `2d expansion.py` in: [[1 hour version] Rainbow Expansion](https://youtu.be/lJPgY2dbE6Y)
-* `menger sponge.py` in: [[3 hour version] Hypnotic Rainbow Menger Sponge](https://youtu.be/_yWIl0H0CBE)
+* `menger sponge.py` in: [[3 hour version] Hypnotic Rainbow Menger Sponge](https://youtu.be/_yWIl0H0CBE) and To Be Released!
 * `triangular implosion.py` in: [[1 hour version] Infinity Mirror with Rainbow](https://youtu.be/9tiIm1luyV4)
 * `square implosion.py` in: [[1 hour version] Portal to a Colorful Infinity](https://youtu.be/1QOa7VMBCx0)
 * `lights.py` in: [[1 hour version] Rainbow tie](https://youtu.be/EKUEIihICE4)
