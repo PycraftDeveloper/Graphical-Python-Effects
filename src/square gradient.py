@@ -1,3 +1,7 @@
+import tracemalloc
+
+tracemalloc.start()
+
 import pygame
 import random
 import pmma
@@ -53,13 +57,13 @@ clock = pygame.time.Clock()
 
 start = time.perf_counter()
 now_time = 0
-while True:
+running = True
+while running:
     display.fill([0, 0, 0])
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
+            running = False
 
     for square in linear_squares:
         square.render()
@@ -67,3 +71,10 @@ while True:
     clock.tick(12)
     pygame.display.update()
     now_time = -(time.perf_counter() - start)
+
+snapshot = tracemalloc.take_snapshot()
+top_stats = snapshot.statistics('lineno')
+
+print("[ Top 10 ]")
+for stat in top_stats[:10]:
+    print(stat)
