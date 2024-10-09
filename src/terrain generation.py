@@ -124,7 +124,7 @@ def generate_terrain(grid_size, scale, amplitude):
     return np.array(vertices, dtype='f4'), np.array(indices, dtype='i4')
 
 vertices, indices = generate_terrain(GRID_SIZE, SCALE, AMPLITUDE)
-noise = pmma.Perlin(octaves=4)
+noise = pmma.Perlin(octaves=8)
 
 def apply_noise(noise, vertices, amplitude):
     for i in range(len(vertices)):
