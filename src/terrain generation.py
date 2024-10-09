@@ -12,9 +12,9 @@ pmma.init()
 
 # Constants for the terrain
 WIDTH, HEIGHT = 1920, 1080
-GRID_SIZE = 1000  # Number of vertices along one side of the terrain
-SCALE = 0.5     # Distance between vertices in the grid
-AMPLITUDE = 50 # Height amplitude for the noise
+GRID_SIZE = 2000#1000  # Number of vertices along one side of the terrain
+SCALE = 0.25#0.5     # Distance between vertices in the grid
+AMPLITUDE = 100#50 # Height amplitude for the noise
 
 # Initialize Pygame and ModernGL context
 pygame.init()
@@ -40,8 +40,7 @@ out vec4 v_color;
 
 void main() {
     // Apply the transformation matrix to the vertex position
-    gl_Position = (mvp * vec4(in_vert, 1.0)) * 50;
-
+    vec3 position = in_vert;
     // Compute the grayscale value based on the height of the vertex
     float grayscale = in_vert.y / height;
     v_color = vec4(0, grayscale, 0, 1.0);  // Set base color to grayscale value
@@ -65,7 +64,12 @@ void main() {
     // Apply the animation effect
     if (radius < growth_factor) {
         // Inside the growing region
-        v_color = vec4(0, grayscale, 0, fade_factor);  // Grayscale based on height
+        if (in_vert.y < 20) {
+            v_color = vec4(0, 0, 1, fade_factor);
+            position.y = 20;
+        } else {
+            v_color = vec4(0, grayscale, 0, fade_factor);
+        }
     } else if (abs(radius - growth_factor) < 5.0) {
         // Highlight the expanding edge with an orange color
         v_color = vec4(1.0, 0.65, 0.0, fade_factor);  // Orange color (#FFA500)
@@ -73,6 +77,8 @@ void main() {
         // Set the final color to black with fade out effect
         v_color = vec4(0, 0, 0, 0.0);
     }
+
+    gl_Position = (mvp * vec4(position, 1.0)) * 50;
 }
 """
 
@@ -123,7 +129,7 @@ noise = pmma.Perlin(octaves=4)
 def apply_noise(noise, vertices, amplitude):
     for i in range(len(vertices)):
         x, y, z = vertices[i]
-        y = noise.generate_2D_perlin_noise(x/100, z/100, new_range=[0, amplitude])
+        y = noise.generate_2D_perlin_noise(x/400, z/400, new_range=[0, amplitude])
         vertices[i] = [x, y, z]
 
     return vertices
