@@ -12,9 +12,102 @@ pmma.init()
 
 # Constants for the terrain
 WIDTH, HEIGHT = 1920, 1080
-GRID_SIZE = 2000#1000  # Number of vertices along one side of the terrain
+GRID_SIZE = 200#1000  # Number of vertices along one side of the terrain
 SCALE = 0.25#0.5     # Distance between vertices in the grid
 AMPLITUDE = 100#50 # Height amplitude for the noise
+
+def load_texture(filepath, context):
+    texture = pygame.image.load(filepath)
+    texture_data = pygame.image.tostring(texture, "RGB", True)
+    return context.texture(texture.get_size(), 3, texture_data)
+
+def generate_terrain(noise, grid_size, scale, amplitude):
+    vertices = []
+    indices = []
+    normals = np.zeros((grid_size * grid_size, 3), dtype='f4')
+    texcoords = []
+
+    half_grid = grid_size // 2
+    for x in range(grid_size):
+        for z in range(grid_size):
+            y = noise.generate_2D_perlin_noise(x / 400, z / 400, new_range=[0, amplitude])
+            vertices.append([(x - half_grid) * scale, y, (z - half_grid) * scale])
+            texcoords.append([x / grid_size, z / grid_size])
+
+    for x in range(grid_size - 1):
+        for z in range(grid_size - 1):
+            top_left = x * grid_size + z
+            top_right = top_left + 1
+            bottom_left = top_left + grid_size
+            bottom_right = bottom_left + 1
+            indices.extend([top_left, bottom_left, top_right])
+            indices.extend([top_right, bottom_left, bottom_right])
+
+    # Calculate normals for each vertex in the grid
+    for x in range(1, grid_size - 1):
+        for z in range(1, grid_size - 1):
+            # Get indices of the current vertex and its neighbors
+            current = x * grid_size + z
+            left = (x - 1) * grid_size + z
+            right = (x + 1) * grid_size + z
+            up = x * grid_size + (z + 1)
+            down = x * grid_size + (z - 1)
+
+            # Calculate the surface normals using cross products of neighboring height differences
+            # dx is the difference in the height (y component) between left and right vertices
+            dx = vertices[right][1] - vertices[left][1]
+            dz = vertices[up][1] - vertices[down][1]
+
+            # Compute the normal vector using cross products (dx, 2.0, dz)
+            normal = np.array([-dx, 2.0, -dz])
+            normal = normal / np.linalg.norm(normal)  # Normalize the vector
+
+            # Store the normal
+            normals[current] = normal
+
+    return np.array(vertices, dtype='f4'), np.array(indices, dtype='i4'), np.array(normals, dtype='f4'), np.array(texcoords, dtype='f4')
+
+def generate_normals(vertices, grid_size, amplitude):
+    # Create a list to store the normals for each vertex
+    normals = np.zeros((grid_size * grid_size, 3), dtype='f4')
+
+    # Calculate normals for each vertex in the grid
+    for x in range(1, grid_size - 1):
+        for z in range(1, grid_size - 1):
+            # Get indices of the current vertex and its neighbors
+            current = x * grid_size + z
+            left = (x - 1) * grid_size + z
+            right = (x + 1) * grid_size + z
+            up = x * grid_size + (z + 1)
+            down = x * grid_size + (z - 1)
+
+            # Calculate the surface normals using cross products of neighboring height differences
+            # dx is the difference in the height (y component) between left and right vertices
+            dx = vertices[right][1] - vertices[left][1]
+            dz = vertices[up][1] - vertices[down][1]
+
+            # Compute the normal vector using cross products (dx, 2.0, dz)
+            normal = np.array([-dx, 2.0, -dz])
+            normal = normal / np.linalg.norm(normal)  # Normalize the vector
+
+            # Store the normal
+            normals[current] = normal
+
+    return normals
+
+# Calculate normals for each vertex
+def calculate_normals(vertices, indices):
+    normals = np.zeros_like(vertices)
+    for i in range(0, len(indices), 3):
+        v0 = vertices[indices[i]]
+        v1 = vertices[indices[i + 1]]
+        v2 = vertices[indices[i + 2]]
+        normal = np.cross(v1 - v0, v2 - v0)
+        normal /= np.linalg.norm(normal)
+        normals[indices[i]] += normal
+        normals[indices[i + 1]] += normal
+        normals[indices[i + 2]] += normal
+    return normals / np.linalg.norm(normals, axis=1)[:, np.newaxis]
 
 # Initialize Pygame and ModernGL context
 pygame.init()
@@ -28,12 +121,15 @@ vertex_shader = """
 
 // Uniform variables passed in from the main program
 uniform mat4 mvp;         // Model-View-Projection matrix
-uniform float height;     // Maximum height value for scaling grayscale
 uniform float time;       // Time variable for animation
 
+uniform sampler2D grass_texture;
+uniform sampler2D rock_texture;
+
 // Input variables from the vertex buffer
-in vec3 in_vert;          // Vertex position
-in vec3 in_norm;          // Normal vector
+in vec3 in_vert;
+in vec3 in_norm;
+in vec2 in_texcoord;
 
 // Output color to be passed to the fragment shader
 out vec4 v_color;
@@ -42,8 +138,14 @@ void main() {
     // Apply the transformation matrix to the vertex position
     vec3 position = in_vert;
     // Compute the grayscale value based on the height of the vertex
-    float grayscale = in_vert.y / height;
-    v_color = vec4(0, grayscale, 0, 1.0);  // Set base color to grayscale value
+    float slope = in_norm.y;
+
+    // Mix between grass and rock textures based on the slope
+    vec4 grass_color = texture(grass_texture, in_texcoord);
+    vec4 rock_color = texture(rock_texture, in_texcoord);
+
+    // Blend grass and rock based on slope (higher slope means more rock)
+    vec3 color = mix(grass_color, rock_color, 1-slope).rgb;
 
     // Calculate the radius from the center of the terrain (using the x and z coordinates)
     float radius = length(in_vert.xz);
@@ -68,7 +170,7 @@ void main() {
             v_color = vec4(0, 0, 1, fade_factor);
             position.y = 20;
         } else {
-            v_color = vec4(0, grayscale, 0, fade_factor);
+            v_color = vec4(color, fade_factor);
         }
     } else if (abs(radius - growth_factor) < 5.0) {
         // Highlight the expanding edge with an orange color
@@ -78,7 +180,7 @@ void main() {
         v_color = vec4(0, 0, 0, 0.0);
     }
 
-    gl_Position = (mvp * vec4(position, 1.0)) * 50;
+    gl_Position = (mvp * vec4(position, 1.0)); // *50
 }
 """
 
@@ -95,58 +197,29 @@ void main() {
 # Create a ModernGL program
 program = context.program(vertex_shader=vertex_shader, fragment_shader=fragment_shader)
 mvp = program['mvp']
-program['height'].value = float(AMPLITUDE)
 
-def generate_terrain(grid_size, scale, amplitude):
-    vertices = []
-    indices = []
-
-    # Generate a flat grid of points with zero heights (height is set later)
-    half_grid = grid_size // 2
-    for x in range(grid_size):
-        for z in range(grid_size):
-            # Create the vertex position (x * scale, height, z * scale)
-            vertices.append([(x - half_grid) * scale, 0, (z - half_grid) * scale])
-
-    # Generate triangle indices for the grid
-    for x in range(grid_size - 1):
-        for z in range(grid_size - 1):
-            # Calculate indices of the four corners of the cell
-            top_left = x * grid_size + z
-            top_right = top_left + 1
-            bottom_left = top_left + grid_size
-            bottom_right = bottom_left + 1
-
-            # Create two triangles for the cell
-            indices.extend([top_left, bottom_left, top_right])  # First triangle
-            indices.extend([top_right, bottom_left, bottom_right])  # Second triangle
-
-    return np.array(vertices, dtype='f4'), np.array(indices, dtype='i4')
-
-vertices, indices = generate_terrain(GRID_SIZE, SCALE, AMPLITUDE)
 noise = pmma.Perlin(octaves=8)
 
-def apply_noise(noise, vertices, amplitude):
-    for i in range(len(vertices)):
-        x, y, z = vertices[i]
-        y = noise.generate_2D_perlin_noise(x/400, z/400, new_range=[0, amplitude])
-        vertices[i] = [x, y, z]
-
-    return vertices
-
-vertices = apply_noise(noise, vertices, AMPLITUDE)
+vertices, indices, normals, texcoords = generate_terrain(noise, GRID_SIZE, SCALE, AMPLITUDE)
 
 class Terrain:
-    def __init__(self, vertices):
+    def __init__(self, vertices, normals, indices, texcoords):
         self.vertices = vertices
+        self.normals = normals
+        self.indices = indices
+        self.texcoords = texcoords
+
+        self.noise = pmma.Perlin(octaves=8)
 
     def apply(self):
-        vbo.write(self.vertices.tobytes())
+        # Combine vertex positions and normals into a single array
+        vertex_data = np.hstack([self.vertices, self.normals, self.texcoords]).astype('f4')
+        vbo.write(vertex_data.tobytes())  # Update VBO with both position and normal data
 
     def update(self):
-        noise = pmma.Perlin(octaves=8)
+        self.noise = pmma.Perlin(octaves=8)
 
-        self.vertices = apply_noise(noise, vertices, AMPLITUDE)
+        self.vertices, self.indices, self.normals, self.texcoords = generate_terrain(self.noise, GRID_SIZE, SCALE, AMPLITUDE)
 
     def terrain_changer(self):
         while True:
@@ -156,16 +229,29 @@ class Terrain:
             if 10-(e-s) > 0:
                 time.sleep(10-(e-s))
 
-terrain = Terrain(vertices)
+terrain = Terrain(vertices, normals, indices, texcoords)
 
 terrain_changer = threading.Thread(target=terrain.terrain_changer)
 terrain_changer.daemon = True
 terrain_changer.start()
 
 # Create ModernGL buffers
-vbo = context.buffer(vertices.tobytes())
+vbo = context.buffer(np.hstack([vertices, normals, texcoords]).astype('f4').tobytes())
 ibo = context.buffer(indices.tobytes())
-vao = context.simple_vertex_array(program, vbo, 'in_vert', index_buffer=ibo)
+vao = context.simple_vertex_array(program, vbo, 'in_vert', 'in_norm', 'in_texcoord', index_buffer=ibo)
+
+grass_texture = load_texture(r"H:\Documents\GitHub\Graphical-Python-Effects\src\resources\grass.png", context)
+grass_texture.repeat_x = True
+grass_texture.repeat_y = True
+rock_texture = load_texture(r"H:\Documents\GitHub\Graphical-Python-Effects\src\resources\rock.png", context)
+rock_texture.repeat_x = True
+rock_texture.repeat_y = True
+
+program['grass_texture'].value = 0
+program['rock_texture'].value = 1
+
+grass_texture.use(location=0)
+rock_texture.use(location=1)
 
 # Camera parameters
 camera_pos = np.array([0.0, 100.0, 25.0])
@@ -219,13 +305,13 @@ while running:
 
     # Mouse look controls
     x, y = pygame.mouse.get_pos()
-    x = time.time() * 100
+    #x = time.time() * 100
     dx, dy = x - last_x, last_y - y
     last_x, last_y = x, y
 
-    camera_pos[0] = 0
-    camera_pos[1] = camera_height + 1
-    camera_pos[2] = 0
+    #camera_pos[0] = 0
+    #camera_pos[1] = camera_height + 1
+    #camera_pos[2] = 0
 
 
     sensitivity = 0.1
@@ -268,7 +354,7 @@ while running:
 
         terrain.apply()
 
-        camera_height = get_height_at_origin(vertices, GRID_SIZE)
+        camera_height = get_height_at_origin(terrain.vertices, GRID_SIZE)
 
     pmma.compute()
 
