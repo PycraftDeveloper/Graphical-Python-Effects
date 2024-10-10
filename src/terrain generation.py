@@ -10,9 +10,11 @@ import math
 
 pmma.init()
 
+import terrain_generator
+
 # Constants for the terrain
 WIDTH, HEIGHT = 1920, 1080
-GRID_SIZE = 200#1000  # Number of vertices along one side of the terrain
+GRID_SIZE = 2000#1000  # Number of vertices along one side of the terrain
 SCALE = 0.25#0.5     # Distance between vertices in the grid
 AMPLITUDE = 100#50 # Height amplitude for the noise
 
@@ -21,93 +23,19 @@ def load_texture(filepath, context):
     texture_data = pygame.image.tostring(texture, "RGB", True)
     return context.texture(texture.get_size(), 3, texture_data)
 
+def generate_perlin_noise(noise, grid_size, scale, amplitude):
+    noise_values = np.empty(grid_size * grid_size, dtype=np.float32)
+
+    for i in range(grid_size):
+        for j in range(grid_size):
+            y = noise.generate_2D_perlin_noise(i / 600.0, j / 600.0, new_range=[0, amplitude])
+            noise_values[i * grid_size + j] = y
+
+    return noise_values
+
 def generate_terrain(noise, grid_size, scale, amplitude):
-    vertices = []
-    indices = []
-    normals = np.zeros((grid_size * grid_size, 3), dtype='f4')
-    texcoords = []
-
-    half_grid = grid_size // 2
-    for x in range(grid_size):
-        for z in range(grid_size):
-            y = noise.generate_2D_perlin_noise(x / 400, z / 400, new_range=[0, amplitude])
-            vertices.append([(x - half_grid) * scale, y, (z - half_grid) * scale])
-            texcoords.append([x / grid_size, z / grid_size])
-
-    for x in range(grid_size - 1):
-        for z in range(grid_size - 1):
-            top_left = x * grid_size + z
-            top_right = top_left + 1
-            bottom_left = top_left + grid_size
-            bottom_right = bottom_left + 1
-            indices.extend([top_left, bottom_left, top_right])
-            indices.extend([top_right, bottom_left, bottom_right])
-
-    # Calculate normals for each vertex in the grid
-    for x in range(1, grid_size - 1):
-        for z in range(1, grid_size - 1):
-            # Get indices of the current vertex and its neighbors
-            current = x * grid_size + z
-            left = (x - 1) * grid_size + z
-            right = (x + 1) * grid_size + z
-            up = x * grid_size + (z + 1)
-            down = x * grid_size + (z - 1)
-
-            # Calculate the surface normals using cross products of neighboring height differences
-            # dx is the difference in the height (y component) between left and right vertices
-            dx = vertices[right][1] - vertices[left][1]
-            dz = vertices[up][1] - vertices[down][1]
-
-            # Compute the normal vector using cross products (dx, 2.0, dz)
-            normal = np.array([-dx, 2.0, -dz])
-            normal = normal / np.linalg.norm(normal)  # Normalize the vector
-
-            # Store the normal
-            normals[current] = normal
-
-    return np.array(vertices, dtype='f4'), np.array(indices, dtype='i4'), np.array(normals, dtype='f4'), np.array(texcoords, dtype='f4')
-
-def generate_normals(vertices, grid_size, amplitude):
-    # Create a list to store the normals for each vertex
-    normals = np.zeros((grid_size * grid_size, 3), dtype='f4')
-
-    # Calculate normals for each vertex in the grid
-    for x in range(1, grid_size - 1):
-        for z in range(1, grid_size - 1):
-            # Get indices of the current vertex and its neighbors
-            current = x * grid_size + z
-            left = (x - 1) * grid_size + z
-            right = (x + 1) * grid_size + z
-            up = x * grid_size + (z + 1)
-            down = x * grid_size + (z - 1)
-
-            # Calculate the surface normals using cross products of neighboring height differences
-            # dx is the difference in the height (y component) between left and right vertices
-            dx = vertices[right][1] - vertices[left][1]
-            dz = vertices[up][1] - vertices[down][1]
-
-            # Compute the normal vector using cross products (dx, 2.0, dz)
-            normal = np.array([-dx, 2.0, -dz])
-            normal = normal / np.linalg.norm(normal)  # Normalize the vector
-
-            # Store the normal
-            normals[current] = normal
-
-    return normals
-
-# Calculate normals for each vertex
-def calculate_normals(vertices, indices):
-    normals = np.zeros_like(vertices)
-    for i in range(0, len(indices), 3):
-        v0 = vertices[indices[i]]
-        v1 = vertices[indices[i + 1]]
-        v2 = vertices[indices[i + 2]]
-        normal = np.cross(v1 - v0, v2 - v0)
-        normal /= np.linalg.norm(normal)
-        normals[indices[i]] += normal
-        normals[indices[i + 1]] += normal
-        normals[indices[i + 2]] += normal
-    return normals / np.linalg.norm(normals, axis=1)[:, np.newaxis]
+    noise_values = generate_perlin_noise(noise, grid_size, scale, amplitude)
+    return terrain_generator.generate_terrain(noise_values, grid_size, scale)
 
 # Initialize Pygame and ModernGL context
 pygame.init()
@@ -138,7 +66,7 @@ void main() {
     // Apply the transformation matrix to the vertex position
     vec3 position = in_vert;
     // Compute the grayscale value based on the height of the vertex
-    float slope = in_norm.y;
+    float slope = in_norm.y/1.10;
 
     // Mix between grass and rock textures based on the slope
     vec4 grass_color = texture(grass_texture, in_texcoord);
@@ -168,7 +96,7 @@ void main() {
         // Inside the growing region
         if (in_vert.y < 20) {
             v_color = vec4(0, 0, 1, fade_factor);
-            position.y = 20;
+            position.y = 21;
         } else {
             v_color = vec4(color, fade_factor);
         }
@@ -198,7 +126,7 @@ void main() {
 program = context.program(vertex_shader=vertex_shader, fragment_shader=fragment_shader)
 mvp = program['mvp']
 
-noise = pmma.Perlin(octaves=8)
+noise = pmma.Perlin(octaves=8, do_prefill=False)
 
 vertices, indices, normals, texcoords = generate_terrain(noise, GRID_SIZE, SCALE, AMPLITUDE)
 
@@ -209,7 +137,7 @@ class Terrain:
         self.indices = indices
         self.texcoords = texcoords
 
-        self.noise = pmma.Perlin(octaves=8)
+        self.noise = pmma.Perlin(octaves=4, do_prefill=False)
 
     def apply(self):
         # Combine vertex positions and normals into a single array
@@ -217,7 +145,7 @@ class Terrain:
         vbo.write(vertex_data.tobytes())  # Update VBO with both position and normal data
 
     def update(self):
-        self.noise = pmma.Perlin(octaves=8)
+        self.noise = pmma.Perlin(octaves=4)
 
         self.vertices, self.indices, self.normals, self.texcoords = generate_terrain(self.noise, GRID_SIZE, SCALE, AMPLITUDE)
 
