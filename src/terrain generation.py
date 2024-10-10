@@ -14,7 +14,7 @@ import terrain_generator
 
 # Constants for the terrain
 WIDTH, HEIGHT = 1920, 1080
-GRID_SIZE = 2000#1000  # Number of vertices along one side of the terrain
+GRID_SIZE = 1000#1000  # Number of vertices along one side of the terrain
 SCALE = 0.25#0.5     # Distance between vertices in the grid
 AMPLITUDE = 100#50 # Height amplitude for the noise
 
@@ -66,7 +66,7 @@ void main() {
     // Apply the transformation matrix to the vertex position
     vec3 position = in_vert;
     // Compute the grayscale value based on the height of the vertex
-    float slope = in_norm.y/1.10;
+    float slope = in_norm.y;
 
     // Mix between grass and rock textures based on the slope
     vec4 grass_color = texture(grass_texture, in_texcoord);
@@ -96,7 +96,7 @@ void main() {
         // Inside the growing region
         if (in_vert.y < 20) {
             v_color = vec4(0, 0, 1, fade_factor);
-            position.y = 21;
+            position.y = 20;
         } else {
             v_color = vec4(color, fade_factor);
         }
@@ -108,7 +108,7 @@ void main() {
         v_color = vec4(0, 0, 0, 0.0);
     }
 
-    gl_Position = (mvp * vec4(position, 1.0)); // *50
+    gl_Position = (mvp * vec4(position*50, 1.0)); // *50
 }
 """
 
@@ -237,9 +237,9 @@ while running:
     dx, dy = x - last_x, last_y - y
     last_x, last_y = x, y
 
-    #camera_pos[0] = 0
-    #camera_pos[1] = camera_height + 1
-    #camera_pos[2] = 0
+    camera_pos[0] = 0
+    camera_pos[1] = camera_height*50 + 1
+    camera_pos[2] = 0
 
 
     sensitivity = 0.1
