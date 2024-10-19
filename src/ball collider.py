@@ -1,6 +1,9 @@
 import pygame
 import math
 import random
+import pmma
+
+pmma.init()
 
 # Initialize Pygame
 pygame.init()
@@ -14,16 +17,18 @@ def pythagorean_distance(x1, y1, x2, y2):
     return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
 class Ball:
-    def __init__(self, x, y, mass, color):
+    def __init__(self, x, y, mass):
         self.x = x
         self.y = y
         self.radius = mass
-        self.color = color
-        self.x_speed = random.randint(0, 20)
-        self.y_speed = random.randint(0, 20)
+        self.color = pmma.ColorConverter()
+        self.x_speed = random.randint(0, 15)
+        self.y_speed = random.randint(0, 15)
         self.mass = mass
+        self.noise = pmma.Perlin()
 
     def compute(self):
+        self.mass = self.noise.generate_1D_perlin_noise(pmma.get_application_run_time()/25, new_range=[5, 25])
         self.x += self.x_speed
         self.y += self.y_speed
 
@@ -75,20 +80,19 @@ class Ball:
             ball.y -= sin_angle * overlap
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.radius)
+        pygame.draw.circle(screen, self.color.generate_color_from_perlin_noise(pmma.get_application_run_time()/25), (int(self.x), int(self.y)), self.radius)
 
 balls = []
 for _ in range(10):
     x = random.randint(100, width - 100)
     y = random.randint(100, height - 100)
     mass = random.randint(10, 50)
-    color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-    balls.append(Ball(x, y, mass, color))
+    balls.append(Ball(x, y, mass))
 
 # Game loop
 running = True
 while running:
-    screen.fill([255, 255, 255])
+    screen.fill([0, 0, 0])
 
     # Handle events
     for event in pygame.event.get():
@@ -105,5 +109,6 @@ while running:
     # Update the display
     pygame.display.flip()
     clock.tick(60)
+    pmma.compute()
 
 pygame.quit()
