@@ -153,7 +153,7 @@ while running:
     x = 55 * np.sin(angle/2)
     y = 55 * np.cos(angle/2)
     view = Matrix44.look_at(
-        eye=Vector3([x, 15, y]), # 1+noise.generate_2D_perlin_noise((int(x)/20)+now_time, (int(y)/20)+now_time, range=[0, 4])
+        eye=Vector3([x, 15, y]), # 1+noise.generate_2D_perlin_noise((int(x)/20)+now_time, (int(y)/20)+now_time, new_range=[0, 4])
         target=Vector3([0, 0, 0]),
         up=Vector3([0, 1, 0])
     )
@@ -163,8 +163,8 @@ while running:
 
     # Update cube heights dynamically
     #i = 0
-    #print(noise.generate_2D_perlin_noise((i%n)+now_time, (i//n)+now_time, range=[0, 4]))
-    new_heights = np.array([noise.generate_2D_perlin_noise(((i%n)/30)+now_time, ((i//n)/30)+now_time, range=[0, 20])  for i, _ in enumerate(heights)], dtype='f4')
+    #print(noise.generate_2D_perlin_noise((i%n)+now_time, (i//n)+now_time, new_range=[0, 4]))
+    new_heights = np.array([noise.generate_2D_perlin_noise(((i%n)/30)+now_time, ((i//n)/30)+now_time, new_range=[0, 20])  for i, _ in enumerate(heights)], dtype='f4')
     height_buffer.write(new_heights.tobytes())
 
     # Render all cuboids with a single draw call

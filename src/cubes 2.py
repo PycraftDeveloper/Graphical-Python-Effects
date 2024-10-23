@@ -140,7 +140,7 @@ while pmma.Registry.running:
     x = 55 * np.sin(angle/2)
     y = 55 * np.cos(angle/2)
     view = Matrix44.look_at(
-        eye=Vector3([x, 10, y]), # 1+noise.generate_2D_perlin_noise((int(x)/20)+now_time, (int(y)/20)+now_time, range=[0, 4])
+        eye=Vector3([x, 10, y]), # 1+noise.generate_2D_perlin_noise((int(x)/20)+now_time, (int(y)/20)+now_time, new_range=[0, 4])
         target=Vector3([0, 0, 0]),
         up=Vector3([0, 1, 0])
     )
@@ -150,7 +150,7 @@ while pmma.Registry.running:
 
     # Update cube heights dynamically
     #i = 0
-    #print(noise.generate_2D_perlin_noise((i%n)+now_time, (i//n)+now_time, range=[0, 4]))
+    #print(noise.generate_2D_perlin_noise((i%n)+now_time, (i//n)+now_time, new_range=[0, 4]))
     new_heights = np.array([[offset[0], noise.generate_2D_perlin_noise(((i%n)/30)+now_time, ((i//n)/30)+now_time, new_range=[0, 4.32])**2, offset[2]]  for i, offset in enumerate(offsets)], dtype='f4')
     offset_buffer.write(new_heights.tobytes())
 

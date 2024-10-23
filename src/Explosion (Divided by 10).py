@@ -49,9 +49,9 @@ while pmma.Registry.running:
 
     for row in range(0, display.get_width(), N):
         color = [
-                seedr.generate_2D_perlin_noise(x/100, row/1000, range=[0, 255]),
-                seedg.generate_2D_perlin_noise(x/100, row/1000, range=[0, 255]),
-                seedb.generate_2D_perlin_noise(x/100, row/1000, range=[0, 255])]
+                seedr.generate_2D_perlin_noise(x/100, row/1000, new_range=[0, 255]),
+                seedg.generate_2D_perlin_noise(x/100, row/1000, new_range=[0, 255]),
+                seedb.generate_2D_perlin_noise(x/100, row/1000, new_range=[0, 255])]
 
         for column in range(0, display.get_height(), N):
             r = display.get_width()/2 + int(row*seed.generate_2D_perlin_noise((row+x)/2000, column/2000))
