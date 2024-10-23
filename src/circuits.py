@@ -67,7 +67,7 @@ points = [Point() for _ in range(N)]
 start = time.perf_counter()
 now_time = 0
 while registry.running:
-    color_value = color.generate_color(now_time/10, format=pmma.Constants.RGB)
+    color_value = color.generate_color_from_perlin_noise(now_time/10, format=pmma.Constants.RGB)
 
     display.clear()
 

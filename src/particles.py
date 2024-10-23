@@ -33,7 +33,7 @@ try:
             x = (canvas.get_width() - (math.sin(now_time+self.n) * self.o))/2
             y = (canvas.get_height() - (math.cos(now_time+self.n) * self.o))/2
 
-            #self.pixel.set_color(self.color.generate_color(now_time/2))
+            #self.pixel.set_color(self.color.generate_color_from_perlin_noise(now_time/2))
             self.pixel.set_position([x, y])
 
             self.pixel.render()

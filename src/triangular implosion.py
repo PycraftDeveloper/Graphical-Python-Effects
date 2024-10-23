@@ -44,7 +44,7 @@ class Triangle:
         # Subtract the center, apply rotation, and then add the center back
         rotated_vertices = np.dot(vertices - self.center, rotation_matrix) + self.center
 
-        color = color_component.generate_color(time.perf_counter())
+        color = color_component.generate_color_from_perlin_noise(time.perf_counter())
 
         pygame.draw.polygon(
             display,

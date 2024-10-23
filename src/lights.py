@@ -51,7 +51,7 @@ while registry.running:
 
     Surface2.fill((0, 0, 0))
 
-    color_value = color.generate_color(now_time/10, format=pmma.Constants.RGB, color_range=[100, 255])
+    color_value = color.generate_color_from_perlin_noise(now_time/10, format=pmma.Constants.RGB, color_range=[100, 255])
 
     #display.clear()
 

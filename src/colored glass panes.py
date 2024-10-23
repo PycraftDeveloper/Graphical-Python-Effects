@@ -74,7 +74,7 @@ while True:
                 pmma.quit()
                 quit()
 
-    generated_color = color.generate_color(now_time/25, format=pmma.Constants.RGB)
+    generated_color = color.generate_color_from_perlin_noise(now_time/25, format=pmma.Constants.RGB)
 
     for pane in panes:
         pane.render(generated_color)

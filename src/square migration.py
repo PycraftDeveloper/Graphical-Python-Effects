@@ -74,7 +74,7 @@ class Square:
     def render(self, timer, frame_index):
         x, y = self.path[frame_index]
         #print(x, y)
-        color = self.color.generate_color(timer/25)
+        color = self.color.generate_color_from_perlin_noise(timer/25)
         pygame.draw.rect(display, color, [x, y+SQUARE_Y_OFFSET, SQUARE_SIZE, SQUARE_SIZE])
         pygame.draw.rect(display, apply_color_offset(color, self.difference), [x, y+SQUARE_Y_OFFSET, SQUARE_SIZE, SQUARE_SIZE], width=3)
 

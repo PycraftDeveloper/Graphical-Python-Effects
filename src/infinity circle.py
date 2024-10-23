@@ -70,7 +70,7 @@ while running:
         w_noise.generate_1D_perlin_noise(now_time/20, new_range=[100, screen.get_height()]),
         h_noise.generate_1D_perlin_noise(now_time/20, new_range=[100, screen.get_height()]),
         angle,
-        color.generate_color(now_time/25))
+        color.generate_color_from_perlin_noise(now_time/25))
 
     # Update the display
     pygame.display.flip()

@@ -93,8 +93,8 @@ prog['view'].write(view.astype('f4'))
 prog['projection'].write(projection.astype('f4'))
 
 # Set near and far colors
-prog['near_color'].value = near_color.generate_color(0, format=pmma.Constants.SMALL_RGB)
-prog['far_color'].value = far_color.generate_color(0, format=pmma.Constants.SMALL_RGB)
+prog['near_color'].value = near_color.generate_color_from_perlin_noise(0, format=pmma.Constants.SMALL_RGB)
+prog['far_color'].value = far_color.generate_color_from_perlin_noise(0, format=pmma.Constants.SMALL_RGB)
 
 ctx.enable(moderngl.DEPTH_TEST)  # Enable depth testing
 ctx.front_face = 'ccw'
@@ -104,8 +104,8 @@ while not glfw.window_should_close(window):
 
     angle = glfw.get_time() / 2
     timer = angle/10
-    prog['near_color'].value = near_color.generate_color(timer, format=pmma.Constants.SMALL_RGB)
-    prog['far_color'].value = far_color.generate_color(timer, format=pmma.Constants.SMALL_RGB)
+    prog['near_color'].value = near_color.generate_color_from_perlin_noise(timer, format=pmma.Constants.SMALL_RGB)
+    prog['far_color'].value = far_color.generate_color_from_perlin_noise(timer, format=pmma.Constants.SMALL_RGB)
     model = Matrix44.from_x_rotation(math.sin(angle)) @ Matrix44.from_z_rotation(math.cos(angle))
     prog['model'].write(model.astype('f4'))
 
