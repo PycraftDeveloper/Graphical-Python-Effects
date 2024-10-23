@@ -31,15 +31,16 @@ The following Python programs HAVE been turned into YouTube videos:
 * `expansion 2.py` in: [[1 hour version] Vertical Paint Expansion](https://youtu.be/9tg38xxOypE)
 * `cubes 2.py` in: [[1 hour version] Spinning Sea of Cubes](https://youtu.be/KeQ9h-Ip0z4)
 * `2d expansion.py` in: [[1 hour version] Rainbow Expansion](https://youtu.be/lJPgY2dbE6Y)
-* `menger sponge.py` in: [[3 hour version] Hypnotic Rainbow Menger Sponge](https://youtu.be/_yWIl0H0CBE) and To Be Released!
+* `menger sponge.py` in: [[3 hour version] Hypnotic Rainbow Menger Sponge](https://youtu.be/_yWIl0H0CBE) and [[1 hour version] Spinning Rainbow Menger Sponge](https://youtu.be/Ya7prLYXjDc)
 * `triangular implosion.py` in: [[1 hour version] Infinity Mirror with Rainbow](https://youtu.be/9tiIm1luyV4)
 * `square implosion.py` in: [[1 hour version] Portal to a Colorful Infinity](https://youtu.be/1QOa7VMBCx0)
 * `lights.py` in: [[1 hour version] Rainbow tie](https://youtu.be/EKUEIihICE4)
 * `space.py` in: [[3 hour version] Rainbow Spinning Space Particles](https://youtu.be/3NcM1yEs2ks)
 * `infinity circle.py` in: [[2 hour version] Spinning Rainbow Circles](https://youtu.be/-QRdwDcxiGE)
-* `colored glass panes.py` in: To be released!
+* `colored glass panes.py` in: [[2 hour version] Colored Glass Waves](https://youtu.be/sQ7LgaqG_bY)
 * `lines.py` in: To be released!
 * `square migration.py` in: To be released!
+* `square gradient.py` in: To be released!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
