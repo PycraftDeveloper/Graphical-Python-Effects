@@ -235,21 +235,21 @@ while running:
 
     # Mouse look controls
     x, y = pygame.mouse.get_pos()
-    x = time.time() * 250
     dx, dy = x - last_x, last_y - y
-    last_x, last_y = x, y
 
     camera_pos[0] = 0
     camera_pos[1] = camera_height + 5#1
     camera_pos[2] = 0
 
-
+    # Sensitivity adjustment
     sensitivity = 0.1
     dx *= sensitivity
     dy *= sensitivity
 
     yaw += dx
     pitch += dy
+
+    # Clamp the pitch to prevent flipping
     if pitch > 89.0:
         pitch = 89.0
     if pitch < -89.0:
@@ -262,6 +262,10 @@ while running:
         np.sin(np.radians(yaw)) * np.cos(np.radians(pitch))
     ])
     camera_front = front / np.linalg.norm(front)
+
+    # Reset mouse to the center of the screen
+    pygame.mouse.set_pos(WIDTH // 2, HEIGHT // 2)
+    last_x, last_y = WIDTH // 2, HEIGHT // 2
 
     # Compute view and projection matrices
     view = Matrix44.look_at(camera_pos, camera_pos + camera_front, camera_up)
