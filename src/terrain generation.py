@@ -14,7 +14,7 @@ import terrain_generator
 
 # Constants for the terrain
 WIDTH, HEIGHT = 1920, 1080
-GRID_SIZE = 1000#1000  # Number of vertices along one side of the terrain
+GRID_SIZE = 750#1000  # Number of vertices along one side of the terrain
 SCALE = 0.25#0.5     # Distance between vertices in the grid
 AMPLITUDE = 100#50 # Height amplitude for the noise
 
@@ -87,8 +87,8 @@ void main() {
     float growth_factor = (1 + sin(time - pi)) / 2 * max_radius;
 
     // Fade out effect for far away points
-    float fade_start = 200;
-    float fade_end = 250;
+    float fade_start = 60; // 60
+    float fade_end = 100; // 85
     float fade_factor = 1-smoothstep(fade_start, fade_end, radius);
 
     // Apply the animation effect
@@ -100,15 +100,17 @@ void main() {
         } else {
             v_color = vec4(color, fade_factor);
         }
-    } else if (abs(radius - growth_factor) < 5.0) {
-        // Highlight the expanding edge with an orange color
-        v_color = vec4(1.0, 0.65, 0.0, fade_factor);  // Orange color (#FFA500)
     } else {
         // Set the final color to black with fade out effect
         v_color = vec4(0, 0, 0, 0.0);
     }
 
-    gl_Position = (mvp * vec4(position*50, 1.0)); // *50
+    if (abs(radius - growth_factor) < 5.0) {
+        // Highlight the expanding edge with an orange color
+        v_color = vec4(1.0, 0.65, 0.0, fade_factor);  // Orange color (#FFA500)
+    }
+
+    gl_Position = 50*(mvp * vec4(position, 1.0)); // *50
 }
 """
 
@@ -233,12 +235,12 @@ while running:
 
     # Mouse look controls
     x, y = pygame.mouse.get_pos()
-    #x = time.time() * 100
+    x = time.time() * 250
     dx, dy = x - last_x, last_y - y
     last_x, last_y = x, y
 
     camera_pos[0] = 0
-    camera_pos[1] = camera_height*50 + 1
+    camera_pos[1] = camera_height + 5#1
     camera_pos[2] = 0
 
 
@@ -274,10 +276,10 @@ while running:
 
     timer = (TAU/10) * now_time
 
-    program['time'].value = timer
+    program['time'].value = timer/2
 
     now_time = time.perf_counter() - start
-    if (TAU/10) * now_time > TAU:
+    if (TAU/10) * now_time/2 > TAU:
         start = time.perf_counter()
 
         terrain.apply()
