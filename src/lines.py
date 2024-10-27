@@ -50,7 +50,7 @@ while True:
             pygame.quit()
             quit()
 
-    col = color.generate_color_from_perlin_noise(now_time/3)
+    col = color.generate_color_from_perlin_noise(now_time/5)
 
     display.fill((0, 0, 0))
 

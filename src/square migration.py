@@ -35,7 +35,7 @@ class Square:
         self.difference = [random.randint(-20, 20), random.randint(-20, 20), random.randint(-20, 20)]
         self.path = []
         v = random.randint(0, 1)
-        print()
+
         if v == 0:
             self.x_displacement = random.randint(-(display.get_width()-(SQUARE_X_CENTER+SQUARE_SIZE*2)), int(SQUARE_SIZE*1.1))
         else:
