@@ -17,8 +17,6 @@ except Exception:
 
 events = pmma.Events()
 
-registry = pmma.Registry()
-
 math = pmma.Math()
 
 class Ball:
@@ -86,7 +84,7 @@ for i in range(n_balls):
 
 start = time.perf_counter()
 now_time = 0
-while registry.running:
+while pmma.get_application_running():
     window_x, window_y = display.get_size()
     window_size = (window_x, window_y)
 
