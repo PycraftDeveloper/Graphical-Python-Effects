@@ -38,9 +38,10 @@ The following Python programs HAVE been turned into YouTube videos:
 * `space.py` in: [[3 hour version] Rainbow Spinning Space Particles](https://youtu.be/3NcM1yEs2ks)
 * `infinity circle.py` in: [[2 hour version] Spinning Rainbow Circles](https://youtu.be/-QRdwDcxiGE)
 * `colored glass panes.py` in: [[2 hour version] Colored Glass Waves](https://youtu.be/sQ7LgaqG_bY)
-* `lines.py` in: To be released!
+* `lines.py` in: [[1 hour version] 4K Rainbow Lines](https://youtu.be/6M4TZS8QFpo)
 * `square migration.py` in: [[2 hour version] Rainbow Matrix of Squares](https://youtu.be/iOO4KsO17LU)
 * `square gradient.py` in: [[2 hour version] 4K Square Rainbow Mosaic](https://youtu.be/7QWb9KULsB8)
+* `tri angular.py` in: To be released!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
