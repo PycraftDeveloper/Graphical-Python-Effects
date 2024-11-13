@@ -41,7 +41,8 @@ The following Python programs HAVE been turned into YouTube videos:
 * `lines.py` in: [[1 hour version] 4K Rainbow Lines](https://youtu.be/6M4TZS8QFpo)
 * `square migration.py` in: [[2 hour version] Rainbow Matrix of Squares](https://youtu.be/iOO4KsO17LU)
 * `square gradient.py` in: [[2 hour version] 4K Square Rainbow Mosaic](https://youtu.be/7QWb9KULsB8)
-* `tri angular.py` in: To be released!
+* `tri angular.py` in: [[1 hour version] 4K 4-Point Color Space](https://youtu.be/kjc7mQ5ldto)
+* `line dance.py` in: To be released!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
