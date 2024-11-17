@@ -14,7 +14,7 @@ import terrain_generator
 
 # Constants for the terrain
 WIDTH, HEIGHT = 1920, 1080
-GRID_SIZE = 3000#1000  # Number of vertices along one side of the terrain
+GRID_SIZE = 1#1000  # Number of vertices along one side of the terrain
 SCALE = 0.1#0.5     # Distance between vertices in the grid
 AMPLITUDE = 100#50 # Height amplitude for the noise
 
@@ -42,6 +42,65 @@ pygame.init()
 pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF | pygame.FULLSCREEN, vsync=1)
 context = moderngl.create_context()
 clock = pygame.time.Clock()
+
+class ExpandableMesh:
+    def __init__(self, initial_size, height_function):
+        self.size = initial_size
+        self.height_function = height_function
+        self.vertices = []
+        self.tex_coords = []
+        self.indices = []
+
+        self.generate_initial_grid()
+
+    def generate_initial_grid(self):
+        half_size = self.size // 2
+        for z in range(-half_size, half_size + 1):
+            for x in range(-half_size, half_size + 1):
+                y = self.height_function(x, z)
+                self.vertices.append((x, y, z))
+                self.tex_coords.append(((x + half_size) / self.size, (z + half_size) / self.size))
+        self.generate_indices()
+
+        self.vbo = context.buffer(np.array(self.vertices, dtype='f4').tobytes())
+        self.ibo = context.buffer(self.indices.tobytes())
+
+    def generate_indices(self):
+        n = self.size
+        indices = []
+        for z in range(n - 1):
+            for x in range(n - 1):
+                i0 = z * n + x
+                i1 = i0 + 1
+                i2 = i0 + n
+                i3 = i2 + 1
+                indices.extend([i0, i1, i2, i2, i1, i3])
+        self.indices = np.array(indices, dtype=np.uint32)
+
+    def expand_grid(self):
+        self.size += 1
+        new_half_size = self.size // 2
+        for x in range(-new_half_size, new_half_size + 1):
+            for z in [-new_half_size, new_half_size]:
+                if (x, z) not in self.vertex_positions():
+                    y = self.height_function(x, z)
+                    self.vertices.append((x, y, z))
+                    self.tex_coords.append(((x + new_half_size) / self.size, (z + new_half_size) / self.size))
+
+        for z in range(-new_half_size + 1, new_half_size):
+            for x in [-new_half_size, new_half_size]:
+                if (x, z) not in self.vertex_positions():
+                    y = self.height_function(x, z)
+                    self.vertices.append((x, y, z))
+                    self.tex_coords.append(((x + new_half_size) / self.size, (z + new_half_size) / self.size))
+
+        self.generate_indices()
+
+        self.vbo.update(np.array(self.vertices, dtype='f4').tobytes())
+        self.ibo.update(self.indices.tobytes())
+
+    def vertex_positions(self):
+        return set((vx, vz) for vx, _, vz in self.vertices)
 
 # Shader Programs
 vertex_shader = """
@@ -144,7 +203,7 @@ class Terrain:
     def apply(self):
         # Combine vertex positions and normals into a single array
         vertex_data = np.hstack([self.vertices, self.normals, self.texcoords]).astype('f4')
-        vbo.write(vertex_data.tobytes())  # Update VBO with both position and normal data
+        #vbo.write(vertex_data.tobytes())  # Update VBO with both position and normal data
 
     def update(self):
         self.noise = pmma.Perlin(octaves=4)
@@ -163,12 +222,9 @@ terrain = Terrain(vertices, normals, indices, texcoords)
 
 terrain_changer = threading.Thread(target=terrain.terrain_changer)
 terrain_changer.daemon = True
-terrain_changer.start()
+#terrain_changer.start()
 
 # Create ModernGL buffers
-vbo = context.buffer(np.hstack([vertices, normals, texcoords]).astype('f4').tobytes())
-ibo = context.buffer(indices.tobytes())
-vao = context.simple_vertex_array(program, vbo, 'in_vert', 'in_norm', 'in_texcoord', index_buffer=ibo)
 
 grass_texture = load_texture(r"H:\Documents\GitHub\Graphical-Python-Effects\src\resources\grass.png", context)
 grass_texture.repeat_x = True
@@ -220,6 +276,11 @@ TAU = math.pi * 2
 
 camera_height = get_height_at_origin(vertices, GRID_SIZE)
 
+def height(x, z):
+    return 0
+
+e = ExpandableMesh(6, height)
+vao1 = context.simple_vertex_array(program, e.vbo, 'in_vert', 'in_norm', 'in_texcoord', index_buffer=e.ibo)
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -277,7 +338,7 @@ while running:
 
     # Render the terrain
     context.clear(0.1, 0.2, 0.3)
-    vao.render(moderngl.TRIANGLES)
+    vao1.render(moderngl.LINES)
     pygame.display.flip()
     clock.tick(60)
 
@@ -286,12 +347,12 @@ while running:
     program['time'].value = timer/2
 
     now_time = time.perf_counter() - start
-    if (TAU/10) * now_time/2 > TAU:
-        start = time.perf_counter()
+    #if (TAU/10) * now_time/2 > TAU:
+        #start = time.perf_counter()
 
-        terrain.apply()
+        #terrain.apply()
 
-        camera_height = get_height_at_origin(terrain.vertices, GRID_SIZE)
+        #camera_height = get_height_at_origin(terrain.vertices, GRID_SIZE)
 
     pmma.compute()
 
