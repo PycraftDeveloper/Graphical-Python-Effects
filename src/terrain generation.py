@@ -14,8 +14,8 @@ import terrain_generator
 
 # Constants for the terrain
 WIDTH, HEIGHT = 1920, 1080
-GRID_SIZE = 750#1000  # Number of vertices along one side of the terrain
-SCALE = 0.25#0.5     # Distance between vertices in the grid
+GRID_SIZE = 3000#1000  # Number of vertices along one side of the terrain
+SCALE = 0.1#0.5     # Distance between vertices in the grid
 AMPLITUDE = 100#50 # Height amplitude for the noise
 
 def load_texture(filepath, context):
@@ -28,7 +28,7 @@ def generate_perlin_noise(noise, grid_size, scale, amplitude):
 
     for i in range(grid_size):
         for j in range(grid_size):
-            y = noise.generate_2D_perlin_noise(i / 600.0, j / 600.0, new_range=[0, amplitude])
+            y = noise.generate_2D_perlin_noise(i / 2500.0, j / 2500.0, new_range=[0, amplitude])
             noise_values[i * grid_size + j] = y
 
     return noise_values
@@ -79,7 +79,7 @@ void main() {
     float radius = length(in_vert.xz);
 
     // Determine the maximum radius for the animation based on the terrain size
-    float max_radius = 250.0;  // Adjust as necessary depending on the grid size
+    float max_radius = 700.0;  // Adjust as necessary depending on the grid size 250
 
     float pi = 3.141592653589793238462643383279502884197169/2;
 
@@ -88,7 +88,7 @@ void main() {
 
     // Fade out effect for far away points
     float fade_start = 60; // 60
-    float fade_end = 100; // 85
+    float fade_end = 700; // 85
     float fade_factor = 1-smoothstep(fade_start, fade_end, radius);
 
     // Apply the animation effect
@@ -210,6 +210,9 @@ def get_height_at_origin(vertices, grid_size):
 
     # Access the height (Y coordinate) at the origin
     height_at_origin = vertices[index_at_origin][1]  # [1] for the Y component
+
+    if height_at_origin < 20:
+        height_at_origin = 20
 
     return height_at_origin
 
