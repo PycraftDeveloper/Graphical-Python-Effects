@@ -22,7 +22,7 @@ class BouncyBall:
         self.vx = math.cos(angle) * EXPLOSION_SPEED  # Velocity in x direction
         self.vy = math.sin(angle) * EXPLOSION_SPEED  # Velocity in y direction
         color = pmma.ColorConverter()
-        self.color = color.generate_color_from_perlin_noise()
+        self.color = color.generate_random_color()
         self.start_time = time.perf_counter()
 
     def render(self):
