@@ -101,8 +101,10 @@ def create_explosion(center_x, center_y, num_balls):
 
 
 # Initialize explosion
-number_of_balls = random.randint(10, 120)
-balls = create_explosion(display.get_width() / 2, display.get_height() / 2, number_of_balls)
+#number_of_balls = random.randint(10, 120)
+#balls = create_explosion(display.get_width() / 2, display.get_height() / 2, number_of_balls)
+number_of_balls = random.randint(1, 120)
+balls = create_explosion(display.get_width() / 2, 10, number_of_balls)
 
 surface = pygame.Surface((display.get_width(), display.get_height()))
 # Main loop
@@ -127,8 +129,10 @@ while True:
         index += 1
 
     if len(balls) == 0:
-        number_of_balls = random.randint(10, 120)
-        balls = create_explosion(display.get_width() / 2, display.get_height() / 2, number_of_balls)
+        #number_of_balls = random.randint(10, 120)
+        #balls = create_explosion(display.get_width() / 2, display.get_height() / 2, number_of_balls)
+        number_of_balls = random.randint(1, 120)
+        balls = create_explosion(display.get_width() / 2, 10, number_of_balls)
 
     pygame.display.flip()
     clock.tick(60)
