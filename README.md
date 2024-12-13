@@ -44,8 +44,9 @@ The following Python programs HAVE been turned into YouTube videos:
 * `tri angular.py` in: [[1 hour version] 4K 4-Point Color Space](https://youtu.be/kjc7mQ5ldto)
 * `line dance.py` in: [[1 hour version] 4K Dancing Lines](https://youtu.be/aLU456XVQWY)
 * `perlin spline.py` in: [[1 hour version] 4K Colored Perlin Lines](https://youtu.be/KD6DiJURHX8)
-* `ball creation.py` in: To be released!
-* `1000 bouncy balls.py` in: To be released!
+* `ball creation.py` in: [[2 hour version] 4K Colored Ball Ascension](https://youtu.be/fWKhY3_ynaQ)
+* `1000 bouncy balls.py` in: [[1 hour version] 4K Bouncy Balls](https://youtu.be/yC3jELVnigA)
+* `3D spinning ball.py` in: To be released and To be released!
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
