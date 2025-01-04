@@ -46,7 +46,9 @@ The following Python programs HAVE been turned into YouTube videos:
 * `perlin spline.py` in: [[1 hour version] 4K Colored Perlin Lines](https://youtu.be/KD6DiJURHX8)
 * `ball creation.py` in: [[2 hour version] 4K Colored Ball Ascension](https://youtu.be/fWKhY3_ynaQ)
 * `1000 bouncy balls.py` in: [[1 hour version] 4K Bouncy Balls](https://youtu.be/yC3jELVnigA)
-* `3D spinning ball.py` in: To be released and To be released!
+* `3D spinning ball.py` in: [[1 hour version] 4K Rainbow Lava Ball](https://youtu.be/CCIVQxMbuWg) and [[1 hour version] 4K Rainbow Plasma](https://youtu.be/GOypjQRR1B8)
+* `24 Christmas SPecial.py` in [[1 hour version] 4K Cosmic Snowflake - Christmas Special!](https://youtu.be/XhryrwTfaz0)
+* `sphere sphere.py` in: [[5 hour version] 4K Rainbow Spheres](https://youtu.be/ukyNrSWsPN4)
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
