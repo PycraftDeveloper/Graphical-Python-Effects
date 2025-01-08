@@ -49,6 +49,8 @@ The following Python programs HAVE been turned into YouTube videos:
 * `3D spinning ball.py` in: [[1 hour version] 4K Rainbow Lava Ball](https://youtu.be/CCIVQxMbuWg) and [[1 hour version] 4K Rainbow Plasma](https://youtu.be/GOypjQRR1B8)
 * `24 Christmas SPecial.py` in [[1 hour version] 4K Cosmic Snowflake - Christmas Special!](https://youtu.be/XhryrwTfaz0)
 * `sphere sphere.py` in: [[5 hour version] 4K Rainbow Spheres](https://youtu.be/ukyNrSWsPN4)
+* `circle ascension.py` in: To be released
+* `gravity.py` in: To be released
 
 The following Python programs WILL LIKELY be turned into YouTube videos soon:
 * `Colored Pixels.py`
