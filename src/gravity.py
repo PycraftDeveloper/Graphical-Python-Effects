@@ -27,12 +27,12 @@ class Wipe:
             pygame.draw.circle(screen, BLACK, (int(self.position[0]), int(self.position[1])), int(self.radius))
             pygame.draw.circle(screen, WHITE, (int(self.position[0]), int(self.position[1])), int(self.radius), width=10)
             d = 60 - clock.get_fps()
-            if d > 2:
+            if d > 7.5:
                 self.radius += d*1.5
             else:
-                self.radius += 2
+                self.radius += 5
 
-        if self.radius > 2250:
+        if self.radius > 2210:
             self.do_wipe = False
             self.radius = 0
 
@@ -47,7 +47,7 @@ class Particle:
         self.mass = size  # Mass is proportional to size
         color = pmma.ColorConverter()
         self.color = color.generate_random_color(format=pmma.Constants.RGB)
-        self.explosion_size = random.randint(100, 250)
+        self.explosion_size = random.randint(250, 750)
 
     def move(self):
         self.x += self.vx
@@ -62,13 +62,13 @@ class Particle:
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, (int(self.x), int(self.y)), self.size)
 
-    def attract(self, other, G=0.5):
+    def attract(self, other, G=1):
         # Calculate distance and direction
         dx = other.x - self.x
         dy = other.y - self.y
         distance = math.sqrt(dx**2 + dy**2)
 
-        if distance > 0 and distance < 1920:  # Limit the interaction range
+        if distance > 0:  # Limit the interaction range
             force = G * (self.mass * other.mass) / distance**2
             fx = force * (dx / distance)
             fy = force * (dy / distance)
@@ -132,13 +132,13 @@ while running:
         p1.move()
         p1.draw(screen)
 
-        if p1.mass > 100:
+        if p1.mass > p1.explosion_size:
             particles.remove(p1)
             # Explosion logic
             num_new_particles = int(p1.explosion_size / 3)  # Number of smaller particles
             for _ in range(num_new_particles):
                 angle = random.uniform(0, 2 * math.pi)  # Random angle for direction
-                speed = random.uniform(1, 3)  # Speed of the smaller particles
+                speed = random.uniform(5, 7)  # Speed of the smaller particles
                 new_vx = math.cos(angle) * speed
                 new_vy = math.sin(angle) * speed
                 particles.append(Particle(p1.x + 20 * math.cos(angle), p1.y + 20 * math.sin(angle), size=random.randint(1, 5), vx=new_vx, vy=new_vy))
