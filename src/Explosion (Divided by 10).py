@@ -6,9 +6,9 @@ import pmma
 pmma.init()
 
 display = pmma.Display()
-display.create(1920, 1080, fullscreen=True)
+display.create()
 
-events = pmma.Events(display)
+events = pmma.Events()
 
 draw = pmma.Draw(display)
 
