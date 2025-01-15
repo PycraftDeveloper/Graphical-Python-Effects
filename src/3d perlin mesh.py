@@ -12,9 +12,10 @@ color = pmma.ColorConverter()
 
 class SphereGrid(WindowConfig):
     title = "3D Sphere Grid"
-    window_size = (1280, 720)
+    window_size = (1920, 1080)
     aspect_ratio = 16 / 9
     resource_dir = "."
+    fullscreen = True
 
     # Grid size
     GRID_SIZE = 20
