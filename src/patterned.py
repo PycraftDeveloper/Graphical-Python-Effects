@@ -34,7 +34,7 @@ while pmma.get_application_running():
         pos = [(math.sin(i+offset)*a)/display.get_aspect_ratio(), math.cos(i+offset)*a]
         distance = pythag(abs(pos[0]), abs(pos[1])) - circle.get_radius(format=pmma.Constants.OPENGL_COORDINATES)
         if distance < ROOT_TWO:
-            size = noise.generate_1D_perlin_noise(-distance + pmma.get_application_run_time(), new_range=[1, 50]) * (distance / ROOT_TWO)
+            size = noise.generate_1D_perlin_noise(-distance + pmma.get_application_run_time()/2, new_range=[1, 50]) * (distance / ROOT_TWO)
             size = max(size, 1)
             circles[i].set_radius(size)
             circles[i].set_center(pos, format=pmma.Constants.OPENGL_COORDINATES)
