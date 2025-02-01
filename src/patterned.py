@@ -3,8 +3,8 @@ import math
 
 pmma.set_clean_profiling(False)
 pmma.set_profile_result_path(r"H:\Downloads\twtwo profile.txt")
-pmma.init(general_profile_application=True)
-#pmma.init(general_profile_application=False, use_c_acceleration=True)
+#pmma.init(general_profile_application=True)
+pmma.init(general_profile_application=False, use_c_acceleration=True)
 
 display = pmma.Display()
 display.create(vsync=False)
