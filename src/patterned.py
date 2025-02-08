@@ -1,5 +1,6 @@
 import pmma
 import math
+import random
 
 pmma.set_clean_profiling(False)
 pmma.set_profile_result_path(r"H:\Downloads\twtwo profile.txt")
@@ -44,7 +45,9 @@ while pmma.get_application_running():
             circles[i].set_center(pos, format=pmma.Constants.OPENGL_COORDINATES)
 
     for i in range(len(circles)):
-        circles[i].render()
+        if random.choice([True, False]):
+            #circles[i].generate_random_color()
+            circles[i].render()
 
     pmma.compute()
 
