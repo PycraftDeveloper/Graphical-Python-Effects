@@ -3,7 +3,7 @@ import math
 import random
 
 pmma.set_clean_profiling(False)
-pmma.set_profile_result_path(r"H:\Downloads\twtwo profile.txt")
+pmma.set_profile_result_path(r"H:\Downloads\40 profile.txt")
 #pmma.init(general_profile_application=True)
 pmma.init(general_profile_application=False, use_c_acceleration=True)
 
@@ -45,9 +45,9 @@ while pmma.get_application_running():
             circles[i].set_center(pos, format=pmma.Constants.OPENGL_COORDINATES)
 
     for i in range(len(circles)):
-        if random.choice([True, False]):
+        #if random.choice([True, False]):
             #circles[i].generate_random_color()
-            circles[i].render()
+        circles[i].render()
 
     pmma.compute()
 
