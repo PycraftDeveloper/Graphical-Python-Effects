@@ -1,18 +1,19 @@
 import pmma
 import math
 import random
+import time
 
 pmma.set_clean_profiling(False)
-pmma.set_profile_result_path(r"H:\Downloads\40 profile.txt")
-#pmma.init(general_profile_application=True)
-pmma.init(general_profile_application=False, use_c_acceleration=True)
+pmma.set_profile_result_path(r"H:\Downloads\60 profile.txt")
+pmma.init(general_profile_application=True)
+#pmma.init(general_profile_application=False, use_c_acceleration=True)
 
 display = pmma.Display()
 display.create(vsync=False)
 
 events = pmma.Events()
 
-noise = pmma.Perlin()
+noise = pmma.Perlin(seed=0)
 
 circles = []
 for _ in range(750): # 750
