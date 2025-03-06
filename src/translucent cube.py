@@ -113,7 +113,7 @@ class Cube:
         self.vbo.write(self.vertices)
 
     def update_rotation(self, angle):
-        rotation = Matrix44.from_eulers((angle, angle, 0), dtype='f4')
+        rotation = Matrix44.from_eulers((angle, angle, angle), dtype='f4')
         self.rotation_matrix = rotation
 
     def render(self):
@@ -126,7 +126,7 @@ def lerp_color(color1, color2, t):
 
 # Initialize Pygame and ModernGL
 pygame.init()
-screen = pygame.display.set_mode((0, 0), DOUBLEBUF | OPENGL | FULLSCREEN)
+screen = pygame.display.set_mode((1080, 1080), DOUBLEBUF | OPENGL)
 ctx = moderngl.create_context()
 
 ctx.enable(moderngl.BLEND)
@@ -165,7 +165,7 @@ while running:
     ctx.clear(1, 1, 1)
 
     outer_color = (*outer.generate_color_from_perlin_noise(value=now_time/7, format=pmma.Constants.SMALL_RGB), 0.5)
-    inner_color = (*inner.generate_color_from_perlin_noise(value=now_time/10, format=pmma.Constants.SMALL_RGB), 0.5)
+    inner_color = (*inner.generate_color_from_perlin_noise(value=-now_time/7, format=pmma.Constants.SMALL_RGB)/2, 0.5)
 
     for i in range(num_cubes):
         cube = cubes[i]
