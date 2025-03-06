@@ -13,8 +13,9 @@ inner = pmma.ColorConverter()
 outer = pmma.ColorConverter()
 
 class Cube:
-    def __init__(self, ctx, outer_size, inner_size, outer_color=(1.0, 0.0, 0.0, 1.0), inner_color=(0.0, 1.0, 0.0, 1.0), scale=1.0):
+    def __init__(self, ctx, outer_size, inner_size, outer_color=(1.0, 0.0, 0.0, 1.0), inner_color=(0.0, 1.0, 0.0, 1.0), scale=1.0, outline=False):
         self.ctx = ctx
+        self.outline = outline
         self.outer_size = outer_size
         self.inner_size = inner_size
         self.outer_color = outer_color
@@ -119,7 +120,10 @@ class Cube:
     def render(self):
         self.program['model'].write(self.rotation_matrix)
         self.program['scale'].value = self.scale  # Pass the scale to the shader
-        self.vao.render(moderngl.TRIANGLES)
+        if self.outline:
+            self.vao.render(moderngl.LINES)
+        else:
+            self.vao.render(moderngl.TRIANGLES)
 
 def lerp_color(color1, color2, t):
     return tuple((1 - t) * c1 + t * c2 for c1, c2 in zip(color1, color2))
@@ -162,7 +166,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    ctx.clear()
+    ctx.clear(1, 1, 1)
 
     outer_color = (*outer.generate_color_from_perlin_noise(value=now_time/7, format=pmma.Constants.SMALL_RGB), 0.5)
     inner_color = (*inner.generate_color_from_perlin_noise(value=now_time/10, format=pmma.Constants.SMALL_RGB), 0.5)
