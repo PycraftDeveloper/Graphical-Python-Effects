@@ -13,9 +13,8 @@ inner = pmma.ColorConverter()
 outer = pmma.ColorConverter()
 
 class Cube:
-    def __init__(self, ctx, outer_size, inner_size, outer_color=(1.0, 0.0, 0.0, 1.0), inner_color=(0.0, 1.0, 0.0, 1.0), scale=1.0, outline=False):
+    def __init__(self, ctx, outer_size, inner_size, outer_color=(1.0, 0.0, 0.0, 1.0), inner_color=(0.0, 1.0, 0.0, 1.0), scale=1.0):
         self.ctx = ctx
-        self.outline = outline
         self.outer_size = outer_size
         self.inner_size = inner_size
         self.outer_color = outer_color
@@ -120,10 +119,7 @@ class Cube:
     def render(self):
         self.program['model'].write(self.rotation_matrix)
         self.program['scale'].value = self.scale  # Pass the scale to the shader
-        if self.outline:
-            self.vao.render(moderngl.LINES)
-        else:
-            self.vao.render(moderngl.TRIANGLES)
+        self.vao.render(moderngl.TRIANGLES)
 
 def lerp_color(color1, color2, t):
     return tuple((1 - t) * c1 + t * c2 for c1, c2 in zip(color1, color2))
@@ -174,8 +170,8 @@ while running:
     for i in range(num_cubes):
         cube = cubes[i]
         ratio = i / (num_cubes - 1)  # A ratio from 0 to 1 for each cube
-        outer_grad = tuple(outer_color[j] * (1 - ratio) + inner_color[j] * ratio for j in range(4))  # Interpolate colors
-        inner_grad = tuple(inner_color[j] * (1 - ratio) + outer_color[j] * ratio for j in range(4))  # Interpolate colors
+        outer_grad = list(outer_color[j] * (1 - ratio) + inner_color[j] * ratio for j in range(3)) + [0.9]  # Interpolate colors
+        inner_grad = list(inner_color[j] * (1 - ratio) + outer_color[j] * ratio for j in range(3)) + [0.9]  # Interpolate colors
         cube.set_color(outer_grad, inner_grad)
 
     # Update rotation for each cube
