@@ -1,9 +1,16 @@
 import pygame
 import moderngl
 import numpy as np
-from pygame.locals import DOUBLEBUF, OPENGL
+from pygame.locals import DOUBLEBUF, OPENGL, FULLSCREEN
 from pyrr import Matrix44
+import pmma
+import time
 
+pmma.init()
+
+
+inner = pmma.ColorConverter()
+outer = pmma.ColorConverter()
 
 class Cube:
     def __init__(self, ctx, outer_size, inner_size, outer_color=(1.0, 0.0, 0.0, 1.0), inner_color=(0.0, 1.0, 0.0, 1.0), scale=1.0):
@@ -93,20 +100,16 @@ class Cube:
         # Initialize rotation matrix
         self.rotation_matrix = Matrix44.identity()
 
-    def set_outer_color(self, color):
-        self.outer_color = color
-        self.vertices[::7] = color[0]
-        self.vertices[1::7] = color[1]
-        self.vertices[2::7] = color[2]
-        self.vertices[3::7] = color[3]
-        self.vbo.write(self.vertices)
-
-    def set_inner_color(self, color):
-        self.inner_color = color
-        self.vertices[::7] = color[0]
-        self.vertices[1::7] = color[1]
-        self.vertices[2::7] = color[2]
-        self.vertices[3::7] = color[3]
+    def set_color(self, outer_color, inner_color):
+        self.outer_color = outer_color
+        self.inner_color = inner_color
+        # Update the vertex buffer with new colors
+        for i in range(8):  # Outer cube vertices
+            start = i * 7
+            self.vertices[start + 3:start + 7] = outer_color
+        for i in range(8, 16):  # Inner cube vertices
+            start = i * 7
+            self.vertices[start + 3:start + 7] = inner_color
         self.vbo.write(self.vertices)
 
     def update_rotation(self, angle):
@@ -123,30 +126,37 @@ def lerp_color(color1, color2, t):
 
 # Initialize Pygame and ModernGL
 pygame.init()
-screen = pygame.display.set_mode((800, 600), DOUBLEBUF | OPENGL)
+screen = pygame.display.set_mode((0, 0), DOUBLEBUF | OPENGL | FULLSCREEN)
 ctx = moderngl.create_context()
 
 ctx.enable(moderngl.BLEND)
 ctx.blend_func = moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA
 
-big_inner_color = (0, 1, 0)
-big_outer_color = (1, 0, 0)
+# Define your outer and inner colors
+outer_color = (1.0, 0.0, 0.0, 0.5)  # Red (RGBA)
+inner_color = (0.0, 0.0, 1.0, 0.5)  # Blue (RGBA)
 
-# Create multiple cubes with progressively smaller sizes
+# Create multiple cubes with progressively smaller sizes and color gradient
 cubes = []
-num_cubes = 25
-delta = 1/num_cubes
+num_cubes = 150
+delta = 1 / num_cubes
 for i in range(num_cubes):
     outer_size = np.array([1.0, 1.0, 1.0]) * (1.0 - (i * delta))  # Outer size gradually decreases
     inner_size = np.array([1.0, 1.0, 1.0]) * (1.0 - (i * delta))  # Inner size slightly smaller
-    outer_color = (1.0 - i * delta, i * delta, 0.0, 0.5)  # Gradient color for outer part (1, 0, 0, 0.5)
-    inner_color = (i * delta, 1.0 - i * delta, 0.0, 0.5)  # Gradient color for inner part (0, 1, 0, 0.5)
-    cubes.append(Cube(ctx, outer_size=outer_size, inner_size=inner_size, outer_color=outer_color, inner_color=inner_color, scale=1.0))
+
+    # Interpolate between the outer and inner color based on the cube index
+    ratio = i / (num_cubes - 1)  # A ratio from 0 to 1 for each cube
+    outer_grad = tuple(outer_color[j] * (1 - ratio) + inner_color[j] * ratio for j in range(4))  # Interpolate colors
+    inner_grad = tuple(inner_color[j] * (1 - ratio) + outer_color[j] * ratio for j in range(4))  # Interpolate colors
+
+    cubes.append(Cube(ctx, outer_size=outer_size, inner_size=inner_size, outer_color=outer_grad, inner_color=inner_grad, scale=1.0))
 
 # Main loop
 clock = pygame.time.Clock()
 running = True
 angle = 0
+now_time = 0
+start = time.perf_counter()
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -154,25 +164,27 @@ while running:
 
     ctx.clear()
 
+    outer_color = (*outer.generate_color_from_perlin_noise(value=now_time/7, format=pmma.Constants.SMALL_RGB), 0.5)
+    inner_color = (*inner.generate_color_from_perlin_noise(value=now_time/10, format=pmma.Constants.SMALL_RGB), 0.5)
+
+    for i in range(num_cubes):
+        cube = cubes[i]
+        ratio = i / (num_cubes - 1)  # A ratio from 0 to 1 for each cube
+        outer_grad = tuple(outer_color[j] * (1 - ratio) + inner_color[j] * ratio for j in range(4))  # Interpolate colors
+        inner_grad = tuple(inner_color[j] * (1 - ratio) + outer_color[j] * ratio for j in range(4))  # Interpolate colors
+        cube.set_color(outer_grad, inner_grad)
+
     # Update rotation for each cube
     for cube in cubes:
         cube.update_rotation(angle)
         cube.render()
-
-    new_inner_color = (0.0, 1.0, 0.0, 0.5)  # New color for inner part
-    new_outer_color = (1.0, 0.0, 0.0, 0.5)  # New color for outer part
-
-    for i in range(num_cubes):
-        cube = cubes[i]
-        outer_color = (1.0 - i * delta, i * delta, 0.0, 0.5)  # Gradient color for outer part
-        inner_color = (i * delta, 1.0 - i * delta, 0.0, 0.5)  # Gradient color for inner part
-        cube.set_outer_color(outer_color)
-        cube.set_inner_color(inner_color)
 
     # Increment angle for rotation
     angle += 0.01
 
     pygame.display.flip()
     clock.tick(60)
+    pmma.compute()
+    now_time = time.perf_counter() - start
 
 pygame.quit()
