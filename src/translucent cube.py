@@ -6,9 +6,10 @@ from pyrr import Matrix44
 
 
 class Cube:
-    def __init__(self, ctx, width=1.0, outer_color=(1.0, 0.0, 0.0, 1.0), inner_color=(0.0, 1.0, 0.0, 1.0), scale=1.0):
+    def __init__(self, ctx, outer_size, inner_size, outer_color=(1.0, 0.0, 0.0, 1.0), inner_color=(0.0, 1.0, 0.0, 1.0), scale=1.0):
         self.ctx = ctx
-        self.width = width
+        self.outer_size = outer_size
+        self.inner_size = inner_size
         self.outer_color = outer_color
         self.inner_color = inner_color
         self.scale = scale  # The scale factor applied in the shader
@@ -16,26 +17,26 @@ class Cube:
         # Define the outer and inner cube vertices with their respective colors
         outer_vertices = np.array([
             # Outer cube vertices (x, y, z, r, g, b, a)
-            -0.5, -0.5, -0.5, *outer_color,
-            0.5, -0.5, -0.5, *outer_color,
-            0.5, 0.5, -0.5, *outer_color,
-            -0.5, 0.5, -0.5, *outer_color,
-            -0.5, -0.5, 0.5, *outer_color,
-            0.5, -0.5, 0.5, *outer_color,
-            0.5, 0.5, 0.5, *outer_color,
-            -0.5, 0.5, 0.5, *outer_color,
+            -self.outer_size[0]/2, -self.outer_size[1]/2, -self.outer_size[2]/2, *outer_color,
+            self.outer_size[0]/2, -self.outer_size[1]/2, -self.outer_size[2]/2, *outer_color,
+            self.outer_size[0]/2, self.outer_size[1]/2, -self.outer_size[2]/2, *outer_color,
+            -self.outer_size[0]/2, self.outer_size[1]/2, -self.outer_size[2]/2, *outer_color,
+            -self.outer_size[0]/2, -self.outer_size[1]/2, self.outer_size[2]/2, *outer_color,
+            self.outer_size[0]/2, -self.outer_size[1]/2, self.outer_size[2]/2, *outer_color,
+            self.outer_size[0]/2, self.outer_size[1]/2, self.outer_size[2]/2, *outer_color,
+            -self.outer_size[0]/2, self.outer_size[1]/2, self.outer_size[2]/2, *outer_color,
         ], dtype='f4')
 
         inner_vertices = np.array([
             # Inner cube vertices (x, y, z, r, g, b, a)
-            -0.5 + width, -0.5 + width, -0.5 + width, *inner_color,
-            0.5 - width, -0.5 + width, -0.5 + width, *inner_color,
-            0.5 - width, 0.5 - width, -0.5 + width, *inner_color,
-            -0.5 + width, 0.5 - width, -0.5 + width, *inner_color,
-            -0.5 + width, -0.5 + width, 0.5 - width, *inner_color,
-            0.5 - width, -0.5 + width, 0.5 - width, *inner_color,
-            0.5 - width, 0.5 - width, 0.5 - width, *inner_color,
-            -0.5 + width, 0.5 - width, 0.5 - width, *inner_color,
+            -self.inner_size[0]/2, -self.inner_size[1]/2, -self.inner_size[2]/2, *inner_color,
+            self.inner_size[0]/2, -self.inner_size[1]/2, -self.inner_size[2]/2, *inner_color,
+            self.inner_size[0]/2, self.inner_size[1]/2, -self.inner_size[2]/2, *inner_color,
+            -self.inner_size[0]/2, self.inner_size[1]/2, -self.inner_size[2]/2, *inner_color,
+            -self.inner_size[0]/2, -self.inner_size[1]/2, self.inner_size[2]/2, *inner_color,
+            self.inner_size[0]/2, -self.inner_size[1]/2, self.inner_size[2]/2, *inner_color,
+            self.inner_size[0]/2, self.inner_size[1]/2, self.inner_size[2]/2, *inner_color,
+            -self.inner_size[0]/2, self.inner_size[1]/2, self.inner_size[2]/2, *inner_color,
         ], dtype='f4')
 
         # Combine the vertices
@@ -108,16 +109,17 @@ class Cube:
         self.vertices[3::7] = color[3]
         self.vbo.write(self.vertices)
 
-    def update_rotation(self, angle, axis):
+    def update_rotation(self, angle):
         rotation = Matrix44.from_eulers((angle, angle, 0), dtype='f4')
         self.rotation_matrix = rotation
 
     def render(self):
-        self.ctx.clear()
         self.program['model'].write(self.rotation_matrix)
         self.program['scale'].value = self.scale  # Pass the scale to the shader
         self.vao.render(moderngl.TRIANGLES)
 
+def lerp_color(color1, color2, t):
+    return tuple((1 - t) * c1 + t * c2 for c1, c2 in zip(color1, color2))
 
 # Initialize Pygame and ModernGL
 pygame.init()
@@ -127,14 +129,19 @@ ctx = moderngl.create_context()
 ctx.enable(moderngl.BLEND)
 ctx.blend_func = moderngl.SRC_ALPHA, moderngl.ONE_MINUS_SRC_ALPHA
 
+big_inner_color = (0, 1, 0)
+big_outer_color = (1, 0, 0)
+
 # Create multiple cubes with progressively smaller sizes
 cubes = []
-num_cubes = 5
+num_cubes = 25
+delta = 1/num_cubes
 for i in range(num_cubes):
-    scale = 1.0 - (i * 0.1)  # Make each cube smaller by 10%
-    outer_color = (1.0 - i * 0.2, i * 0.2, 0.0, 0.5)  # Gradient color for outer part
-    inner_color = (i * 0.2, 1.0 - i * 0.2, 0.0, 0.5)  # Gradient color for inner part
-    cubes.append(Cube(ctx, width=0.1, outer_color=outer_color, inner_color=inner_color, scale=scale))
+    outer_size = np.array([1.0, 1.0, 1.0]) * (1.0 - (i * delta))  # Outer size gradually decreases
+    inner_size = np.array([1.0, 1.0, 1.0]) * (1.0 - (i * delta))  # Inner size slightly smaller
+    outer_color = (1.0 - i * delta, i * delta, 0.0, 0.5)  # Gradient color for outer part (1, 0, 0, 0.5)
+    inner_color = (i * delta, 1.0 - i * delta, 0.0, 0.5)  # Gradient color for inner part (0, 1, 0, 0.5)
+    cubes.append(Cube(ctx, outer_size=outer_size, inner_size=inner_size, outer_color=outer_color, inner_color=inner_color, scale=1.0))
 
 # Main loop
 clock = pygame.time.Clock()
@@ -145,10 +152,22 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    ctx.clear()
+
     # Update rotation for each cube
     for cube in cubes:
-        cube.update_rotation(angle, axis='y')
+        cube.update_rotation(angle)
         cube.render()
+
+    new_inner_color = (0.0, 1.0, 0.0, 0.5)  # New color for inner part
+    new_outer_color = (1.0, 0.0, 0.0, 0.5)  # New color for outer part
+
+    for i in range(num_cubes):
+        cube = cubes[i]
+        outer_color = (1.0 - i * delta, i * delta, 0.0, 0.5)  # Gradient color for outer part
+        inner_color = (i * delta, 1.0 - i * delta, 0.0, 0.5)  # Gradient color for inner part
+        cube.set_outer_color(outer_color)
+        cube.set_inner_color(inner_color)
 
     # Increment angle for rotation
     angle += 0.01
