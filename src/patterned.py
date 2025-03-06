@@ -5,8 +5,8 @@ import time
 
 pmma.set_clean_profiling(False)
 pmma.set_profile_result_path(r"H:\Downloads\60 profile.txt")
-pmma.init(general_profile_application=True)
-#pmma.init(general_profile_application=False, use_c_acceleration=True)
+#pmma.init(general_profile_application=True)
+pmma.init(general_profile_application=False, use_c_acceleration=True) ## peak 53, stabilizes at 50
 
 display = pmma.Display()
 display.create(vsync=False)
