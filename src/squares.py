@@ -23,11 +23,15 @@ class Square:
         self.rectangle = pmma.Rectangle()
         self.rectangle.set_center((0, 0), pmma.Constants.OPENGL_COORDINATES)
         self.rectangle.set_size((self.size, self.size))
-        self.color = pmma.ColorConverter(seed=0)
+        self.rectangle.set_red_seed(0)
+        self.rectangle.set_green_seed(1)
+        self.rectangle.set_blue_seed(2)
+        self.rectangle.set_alpha_seed(3)
+        self.rectangle.generate_color_from_perlin_noise()
 
     def render(self, now_time):
         self.rectangle.set_rotation(self.n)
-        self.rectangle.set_color(self.color.generate_color_from_perlin_noise((now_time+self.n)/75, format=pmma.Constants.RGB))
+        self.rectangle.generate_color_from_perlin_noise((now_time+self.n)/75, generate_alpha=False)
 
         self.rectangle.render()
 
@@ -38,11 +42,9 @@ diag = int(math.sqrt(canvas.get_width()**2 + canvas.get_width()**2))
 for i in range(0, diag, 8):
     squares.append(Square(diag-i))
 
-print(i)
-
 start = time.perf_counter()
 now_time = 0
-while True:
+while pmma.get_application_running():
     #k = time.perf_counter()
     center = (canvas.get_width()/2, canvas.get_height()/2)
 
@@ -57,3 +59,5 @@ while True:
     canvas.refresh()
     now_time = time.perf_counter() - start
     #s = time.perf_counter()
+
+pmma.quit()
