@@ -141,9 +141,9 @@ model_matrix = Matrix44.identity()
 # Main loop
 running = True
 angle = 0.0
-x_noise = pmma.Perlin(do_prefill=False)
-y_noise = pmma.Perlin(do_prefill=False)
-z_noise = pmma.Perlin(do_prefill=False)
+x_noise = pmma.Perlin()
+y_noise = pmma.Perlin()
+z_noise = pmma.Perlin()
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -157,27 +157,14 @@ while running:
     angle += 0.01
     model_matrix = Matrix44.from_eulers((angle, angle / 2, angle / 3))
 
-    # Normalize instance positions for noise
-    norm_x = instance_positions[:, 0] / 25 + pmma.get_application_run_time() / 25
-    norm_y = instance_positions[:, 1] / 25 + pmma.get_application_run_time() / 25
-    norm_z = instance_positions[:, 2] / 25 + pmma.get_application_run_time() / 25
+    r = x_noise.generate_2D_perlin_noise(pmma.get_application_run_time()/5, pmma.get_application_run_time()/5, new_range=[0, 1])
+    g = y_noise.generate_2D_perlin_noise(pmma.get_application_run_time()/5, pmma.get_application_run_time()/5, new_range=[0, 1])
+    b = z_noise.generate_2D_perlin_noise(pmma.get_application_run_time()/5, pmma.get_application_run_time()/5, new_range=[0, 1])
 
-    # Vectorized Perlin noise generation
-    vec_perlin_x = np.vectorize(x_noise.generate_2D_perlin_noise, otypes=['f4'])
-    vec_perlin_y = np.vectorize(y_noise.generate_2D_perlin_noise, otypes=['f4'])
-    vec_perlin_z = np.vectorize(z_noise.generate_2D_perlin_noise, otypes=['f4'])
+    for i in range(len(instance_positions)):
+        instance_colors[i] = (r, g, b)
 
-    # Compute noise values efficiently
-    r_values = (vec_perlin_x(norm_x, norm_y) + 1) / 2
-    g_values = (vec_perlin_y(norm_y, norm_z) + 1) / 2
-    b_values = (vec_perlin_z(norm_z, norm_x) + 1) / 2
-
-    # Assign noise values to instance colors
-    instance_colors[:, 0] = r_values
-    instance_colors[:, 1] = g_values
-    instance_colors[:, 2] = b_values
-
-    # Update the color buffer in one go
+    # Update the color buffer
     vbo_instance_color.write(instance_colors.tobytes())
 
     # Update uniforms
