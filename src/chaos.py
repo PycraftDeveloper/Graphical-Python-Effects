@@ -144,6 +144,7 @@ angle = 0.0
 x_noise = pmma.Perlin(do_prefill=False)
 y_noise = pmma.Perlin(do_prefill=False)
 z_noise = pmma.Perlin(do_prefill=False)
+general = pmma.General()
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -158,9 +159,9 @@ while running:
     model_matrix = Matrix44.from_eulers((angle, angle / 2, angle / 3))
 
     # Normalize instance positions for noise
-    norm_x = instance_positions[:, 0] / 25 + pmma.get_application_run_time() / 25
-    norm_y = instance_positions[:, 1] / 25 + pmma.get_application_run_time() / 25
-    norm_z = instance_positions[:, 2] / 25 + pmma.get_application_run_time() / 25
+    norm_x = instance_positions[:, 0] / 25 + general.get_application_run_time() / 25
+    norm_y = instance_positions[:, 1] / 25 + general.get_application_run_time() / 25
+    norm_z = instance_positions[:, 2] / 25 + general.get_application_run_time() / 25
 
     # Vectorized Perlin noise generation
     vec_perlin_x = np.vectorize(x_noise.generate_2D_perlin_noise, otypes=['f4'])
