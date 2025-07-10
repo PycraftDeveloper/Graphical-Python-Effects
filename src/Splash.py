@@ -3,12 +3,12 @@
 import pmma, random
 
 display = pmma.Display()
-display.create([0, 0])
+display.create([1920, 1080], fullscreen=False)
 
 class Splash:
     def __init__(self):
         self.position = [random.randint(0, display.get_width()), random.randint(0, display.get_height())]
-        self.radius = random.randint(5, 150)
+        self.radius = random.randint(5, 50)
         self.current_radius = 1
         self.current_width = self.radius
         color_converter = pmma.ColorConverter()
@@ -38,10 +38,11 @@ class Splash:
             self.circle.render()
 
 circles = []
-for i in range(75):
+for i in range(100):
     circles.append(Splash())
 
 while True:
+    destroyed = 0
     display.clear()
 
     for circle in circles:
@@ -52,7 +53,7 @@ while True:
     for circle in circles:
         if circle.destroy:
             circles.remove(circle)
+            destroyed += 1
 
-    if len(circles) < 75:
-        for i in range(1, 25):
-            circles.append(Splash())
+    for i in range(destroyed):
+        circles.append(Splash())
