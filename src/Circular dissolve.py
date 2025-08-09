@@ -20,13 +20,12 @@ def lerp(start, end, duration, elapsed):
 
 CENTER = [1920 // 2, 1080 // 2]
 
-class Point(pmma.Shapes2D.Circle):
+class Point(pmma.Shapes2D.Pixel):
     def __init__(self, angle):
         super().__init__()
 
         self.shape_center.set_coords([0, 0])
         self.shape_color.generate_from_random()
-        self.set_radius(3)
         self.angle = angle
         self.start = time.perf_counter()
         self.start_point = CENTER
@@ -53,7 +52,7 @@ class Point(pmma.Shapes2D.Circle):
         super().render()
 
 display = pmma.Display()
-display.create([1920, 1080], fullscreen=False)
+display.create([1920, 1080], fullscreen=False, vsync=False)
 
 time.sleep(2)
 
@@ -62,9 +61,9 @@ next_radius = CENTER[1]
 #next_number_of_points = calculate_number_of_pixels(next_radius)
 
 points = []
-for r in range(0, 36, 6):
-    for i in range(360):
-        angle = ((2 * math.pi) / 360) * i
+for r in range(0, 36, 1):
+    for i in range(1080):
+        angle = ((2 * math.pi) / 1080) * i
         points.append(Point(angle))
         points[-1].set_end(next_radius - r)
 
@@ -90,8 +89,8 @@ while True:
         for point in points:
             point.set_end(next_radius - r)
             count += 1
-            if count % 360 == 0:
-                r += 6
+            if count % 1080 == 0:
+                r += 1
 
 
     display.clear()
@@ -99,4 +98,6 @@ while True:
     for point in points:
         point.render()
 
-    display.continuous_refresh()
+    display.continuous_refresh(refresh_rate=0)
+
+# 8 FPS
