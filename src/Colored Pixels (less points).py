@@ -4,7 +4,6 @@ from ctypes import c_int64
 
 import numpy as np
 import pygame
-import numba
 from pygame import gfxdraw
 
 GRADIENTS2 = np.array([
@@ -55,13 +54,11 @@ NORM_CONSTANT2 = 47
 NORM_CONSTANT3 = 103
 NORM_CONSTANT4 = 30
 
-@numba.njit(cache=True)
 def extrapolate2(perm, xsb, ysb, dx, dy):
     index = perm[(perm[xsb & 0xFF] + ysb) & 0xFF] & 0x0E
     g1, g2 = GRADIENTS2[index : index + 2]
     return g1 * dx + g2 * dy
 
-@numba.njit(cache=True)
 def generatekey(x, y, perm):
     stretch_offset = (x + y) * STRETCH_CONSTANT2
 
