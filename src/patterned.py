@@ -55,3 +55,5 @@ while pmma.get_application_running():
     display.refresh(lower_refresh_rate_when_minimized=False, lower_refresh_rate_when_unfocused=False, refresh_rate=6000)
 
 pmma.quit()
+
+# PMMA 4.2.2 - 50 FPS ish
