@@ -3,7 +3,7 @@ import pmma
 from typing import Iterable
 
 display = pmma.Display()
-display.create([3840, 2160], fullscreen=True)
+display.create([1920, 1080], fullscreen=True)
 
 seed = pmma.PerlinNoise()
 
@@ -36,7 +36,7 @@ while True:
         for column in range(0, 1080, N):
             r = int((width  / 2) * (1 + seed.noise_2d(v, column/2000)))
             c = int((height / 2) * (1 + seed.noise_2d(column/2000, v)))
-            circles[index].shape_center.set_coord([r, c])
+            circles[index].shape_center.set_coord(r, c)
             circles[index].shape_color.generate_from_2D_perlin_noise(k, z)
             circles[index].render()
             index += 1
