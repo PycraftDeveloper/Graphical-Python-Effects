@@ -12,13 +12,18 @@ color = pmma.NumberFormats.Color()
 color.configure()
 color.generate_from_1D_perlin_noise(time.perf_counter())
 
+size = display.get_size()
+dist = (((display.get_width() ** 2) + (display.get_height() ** 2)) ** 0.5) / 2
 angles = {}
 rays = []
 
 class Ray:
     def __init__(self, angle, i):
         self.angle = angle
-        self.length = random.randint(3, 100)
+        if random.randint(0, 1) == 0:
+            self.length = 6
+        else:
+            self.length = random.randint(7, 100)
         self.velocity = 2.0
         self.origin = display.get_center()
         self.distance = 0.0
@@ -33,7 +38,7 @@ class Ray:
         self.c_end = [0, 0]
 
     def render(self):
-        if self.c_end[0] < 0 or self.c_end[0] > display.get_width() or self.c_end[1] < 0 or self.c_end[1] > display.get_height():
+        if self.distance > dist:
             rays.remove(self)
             return
 
