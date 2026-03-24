@@ -1,3 +1,5 @@
+#type: ignore
+
 import pmma
 import random
 import time
